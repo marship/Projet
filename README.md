@@ -14,5 +14,3 @@ Lancement du projet de Prog5
 ### Historique
 
 16/12/2021 : Création du GitHub / Création du serveur Discord
-
-## OUAIS
