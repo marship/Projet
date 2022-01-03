@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 
 /* TOUT CECI SORT DE LA DOCUMENTATION DE L'ENTETE D'UN FICHIER ELF */
 
