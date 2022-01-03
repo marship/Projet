@@ -140,21 +140,6 @@ typedef struct
 #define EV_NONE 0    /* Invalid versionn */
 #define EV_CURRENT 1 /* Current version */
 
-/* ELF32 section header. */
-typedef struct
-{
-    Elf32_Word sh_name;
-    Elf32_Word sh_type;
-    Elf32_Word sh_flags;
-    Elf32_Addr sh_addr;
-    Elf32_Off sh_offset;
-    Elf32_Word sh_size;
-    Elf32_Word sh_link;
-    Elf32_Word sh_info;
-    Elf32_Word sh_addralign;
-    Elf32_Word sh_entsize;
-} Elf32_Shdr;
-
 /* e_entry */
 
 /* e_phoff */
