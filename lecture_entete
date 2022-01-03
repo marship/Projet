@@ -13,6 +13,24 @@ int main(void) {
     char pad;
     char nident;
     uint16_t type;
+    uint16_t machine;
+    uint32_t version2;
+    uint32_t entree;
+    uint32_t progtete;
+    uint32_t secttete;
+    uint32_t flags;
+    uint16_t taille;
+    uint16_t phentsize;
+    uint16_t phnum;
+    uint16_t shentsize;
+    uint16_t shnum;
+    uint16_t shstrndx;
+    uint16_t a;
+    uint16_t b;
+    uint16_t c;
+    uint16_t d;
+    uint16_t fzz;
+    uint16_t ehjf;
 
     fic = fopen("ARM_runner_example.o", "rb");
 
@@ -28,11 +46,29 @@ int main(void) {
     fread(&class, sizeof(char), 1, fic);
     fread(&data, sizeof(char), 1, fic);
     fread(&version, sizeof(char), 1, fic);
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < 9; i++)
     {
         fread(&pad, sizeof(char), 1, fic);
     }
     fread(&type, sizeof(uint16_t), 1, fic);
+    fread(&machine, sizeof(uint16_t), 1, fic);
+    fread(&version2, sizeof(uint32_t), 1, fic);
+    fread(&entree, sizeof(uint32_t), 1, fic);
+    fread(&progtete, sizeof(uint32_t), 1, fic);
+    fread(&pad, sizeof(uint32_t), 1, fic);
+    fread(&flags, sizeof(uint32_t), 1, fic);
+    fread(&secttete, sizeof(uint16_t), 1, fic);
+    fread(&pad, sizeof(uint16_t), 1, fic);
+    fread(&pad, sizeof(uint16_t), 1, fic);
+    fread(&pad, sizeof(uint16_t), 1, fic);
+    fread(&pad, sizeof(uint16_t), 1, fic);
+    fread(&pad, sizeof(uint16_t), 1, fic);
+    fread(&taille, sizeof(uint16_t), 1, fic);
+    fread(&phentsize, sizeof(uint16_t), 1, fic);
+    fread(&phnum, sizeof(uint16_t), 1, fic);
+    fread(&shentsize, sizeof(uint16_t), 1, fic);
+    fread(&shnum, sizeof(uint16_t), 1, fic);
+    fread(&shstrndx, sizeof(uint16_t), 1, fic);
 
     printf("Classe : ");
     switch (class)
@@ -73,7 +109,7 @@ int main(void) {
     }
 
     printf("Version : ");
-    switch (data)
+    switch (version)
     {
     case 0:
         printf("invalide !\n");
@@ -87,7 +123,7 @@ int main(void) {
         break;
     }
 
-    printf("Type : %d", type);
+    printf("Type : ");
     switch (type)
     {
     case 0:
@@ -113,6 +149,79 @@ int main(void) {
     default:
         break;
     }
+
+    printf("Machine : ");
+    switch (machine)
+    {
+    case 0:
+        printf("Sans machine\n");
+        break;
+
+    case 1:
+        printf("AT&T WE 32100\n");
+        break;
+    
+    case 2:
+        printf("SPARC\n");
+        break;
+    
+    case 3:
+        printf("Intel Architecture\n");
+        break;
+    
+    case 4:
+        printf("Motorola 68000\n");
+        break;
+    
+    case 5:
+        printf("Motorola 88000\n");
+        break;
+    
+    case 7:
+        printf("Intel 80860\n");
+        break;
+    
+    case 8:
+        printf("MIPS RS3000 Big-Endian\n");
+        break;
+    
+    case 10:
+        printf("MIPS RS4000 Big-Endian\n");
+        break;
+
+    case 62:
+        printf("Advanced Micro Devices X86-64\n");
+        break;
+    
+    default:
+        break;
+    }
+
+    printf("Version : ");
+    switch (version2)
+    {
+    case 0:
+        printf("invalide !\n");
+        break;
+
+    case 1:
+        printf("actuelle\n");
+        break;
+    
+    default:
+        break;
+    }
+
+    printf("Adresse du point d'entrée : 0x%d\n", entree);
+    printf("Adresse de l'en-tête du programme : %d\n", progtete);
+    printf("Début de l'en-tête de la section : %d\n", secttete);
+    printf("Adresse des flags : 0x%d\n", flags);
+    printf("Taille : %d\n", taille);
+    printf("Taille de l'en-tête du programme : %d\n", phentsize);
+    printf("Nombre d'en-tête du programme : %d\n", phnum);
+    printf("Taille de l'en-tête des sections : %d\n", shentsize);
+    printf("Nombre d'en-tête des sections : %d\n", shnum);
+    printf("Table d'index des chaînes d'en-tête de section : %d\n", shstrndx);
 
     fclose(fic);
     return 0;
