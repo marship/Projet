@@ -1,0 +1,119 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+int main(void) {
+    FILE *fic;
+    char e;
+    char l;
+    char f;
+    char class;
+    char data;
+    char version;
+    char pad;
+    char nident;
+    uint16_t type;
+
+    fic = fopen("ARM_runner_example.o", "rb");
+
+    if(fic == NULL){
+        fprintf(stderr, "faux\n");
+        exit(EXIT_FAILURE);
+    }
+
+    fread(&e, sizeof(char), 1, fic);
+    fread(&e, sizeof(char), 1, fic);
+    fread(&l, sizeof(char), 1, fic);
+    fread(&f, sizeof(char), 1, fic);
+    fread(&class, sizeof(char), 1, fic);
+    fread(&data, sizeof(char), 1, fic);
+    fread(&version, sizeof(char), 1, fic);
+    for (int i = 0; i < 10; i++)
+    {
+        fread(&pad, sizeof(char), 1, fic);
+    }
+    fread(&type, sizeof(uint16_t), 1, fic);
+
+    printf("Classe : ");
+    switch (class)
+    {
+    case 0:
+        printf("invalide !\n");
+        break;
+
+    case 1:
+        printf("32 bits\n");
+        break;
+
+    case 2:
+        printf("64 bits\n");
+        break;
+    
+    default:
+        break;
+    }
+
+    printf("Données : ");
+    switch (data)
+    {
+    case 0:
+        printf("invalide !\n");
+        break;
+
+    case 1:
+        printf("Little endian\n");
+        break;
+
+    case 2:
+        printf("Big endian\n");
+        break;
+    
+    default:
+        break;
+    }
+
+    printf("Version : ");
+    switch (data)
+    {
+    case 0:
+        printf("invalide !\n");
+        break;
+
+    case 1:
+        printf("actuelle\n");
+        break;
+    
+    default:
+        break;
+    }
+
+    printf("Type : %d", type);
+    switch (type)
+    {
+    case 0:
+        printf("Sans type\n");
+        break;
+
+    case 1:
+        printf("Relogeable\n");
+        break;
+    
+    case 2:
+        printf("Executable\n");
+        break;
+    
+    case 3:
+        printf("Objet partage\n");
+        break;
+    
+    case 4:
+        printf("Core\n");
+        break;
+    
+    default:
+        break;
+    }
+
+    fclose(fic);
+    return 0;
+}
