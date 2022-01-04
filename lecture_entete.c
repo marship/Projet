@@ -1,232 +1,228 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include "lecture_entete.h"
+#include "entete_elf.h"
 
-int main(void) {
-    FILE *fic;
-    char e;
-    char l;
-    char f;
-    char class;
-    char data;
-    char version;
-    char pad;
-    char nident;
-    uint16_t type;
-    uint16_t machine;
-    uint32_t version2;
-    uint32_t entree;
-    uint32_t progtete;
-    uint32_t secttete;
-    uint32_t flags;
-    uint16_t taille;
-    uint16_t phentsize;
-    uint16_t phnum;
-    uint16_t shentsize;
-    uint16_t shnum;
-    uint16_t shstrndx;
 
-    fic = fopen("csapp.o", "rb");
+int read_uint16(uint16_t *ptr, FILE *stream, unsigned char endian) {
+    if (endian < ELFDATA2LSB || endian > ELFDATA2MSB) {
+        return fread(ptr, sizeof(uint16_t), 1, stream);
+    }
 
-    if(fic == NULL){
-        fprintf(stderr, "faux\n");
+    unsigned char b1, b2;
+
+    if (fread(&b1, sizeof(char), 1, stream) == 0 || fread(&b2, sizeof(char), 1, stream) == 0) {
+        return 0;
+    }
+
+    if (endian == ELFDATA2LSB) {
+        *ptr = ((uint16_t) b2) << 8 | (uint16_t) b1;
+    }
+    else {
+        *ptr = ((uint16_t) b1) << 8 | (uint16_t) b2;
+    }
+    return 1;
+}
+
+int read_uint32(uint32_t *ptr, FILE *stream, unsigned char endian) {
+    if (endian < ELFDATA2LSB || endian > ELFDATA2MSB) {
+        return fread(ptr, sizeof(uint32_t), 1, stream);
+    }
+
+    unsigned char b1, b2, b3, b4;
+
+    if (fread(&b1, sizeof(char), 1, stream) == 0 || fread(&b2, sizeof(char), 1, stream) == 0
+    || fread(&b3, sizeof(char), 1, stream) == 0 || fread(&b4, sizeof(char), 1, stream) == 0) {
+        return 0;
+    }
+
+    if (endian == ELFDATA2LSB) {
+        *ptr = ((uint32_t) b4) << 24 | ((uint32_t) b3) << 16 | ((uint32_t) b2) << 8 | (uint32_t) b1;
+    }
+    else {
+        *ptr = ((uint32_t) b1) << 24 | ((uint32_t) b2) << 16 | ((uint32_t) b3) << 8 | (uint32_t) b4;
+    }
+    return 1;
+}
+
+void lire_entete(char *nom_fichier) {
+    FILE *f;
+    Elf32_Ehdr hdr;
+
+    // Ouverture du fichier
+    f = fopen(nom_fichier, "rb");
+
+    if (f == NULL) {
+        fprintf(stderr, "Error: Can't open file %s\n", nom_fichier);
         exit(EXIT_FAILURE);
     }
 
-    fread(&e, sizeof(char), 1, fic);
-    fread(&e, sizeof(char), 1, fic);
-    fread(&l, sizeof(char), 1, fic);
-    fread(&f, sizeof(char), 1, fic);
-    
-    fread(&class, sizeof(char), 1, fic);
-    printf("Classe : ");
-    switch (class)
-    {
-    case 0:
-        printf("invalide !\n");
-        break;
+    // Lecture de e_ident
+    for (int i = 0; i < EI_NIDENT; i++) {
+        if (fread(&hdr.e_ident[i], sizeof(char), 1, f) == 0) {
+            fprintf(stderr, "Error: %s: Failed to read file header\n", nom_fichier);
+            exit(EXIT_FAILURE);
+        }
+    }
 
-    case 1:
-        printf("32 bits\n");
-        break;
+    // Vérification qu'il s'agit bien d'un fichier ELF
+    if (hdr.e_ident[EI_MAG0] != ELFMAG0 || hdr.e_ident[EI_MAG1] != ELFMAG1
+    || hdr.e_ident[EI_MAG2] != ELFMAG2 || hdr.e_ident[EI_MAG3] != ELFMAG3) {
+        fprintf(stderr, "Error: Not an ELF file - it has the wrong magic bytes at the start\n");
+        exit(EXIT_FAILURE);
+    }
 
-    case 2:
-        printf("64 bits\n");
+    // Lecture de la suite de l'entête
+    if (read_uint16(&hdr.e_type, f, hdr.e_ident[EI_DATA]) == 0
+    || read_uint16(&hdr.e_machine, f, hdr.e_ident[EI_DATA]) == 0
+    || read_uint32(&hdr.e_version, f, hdr.e_ident[EI_DATA]) == 0
+    || read_uint32(&hdr.e_entry, f, hdr.e_ident[EI_DATA]) == 0
+    || read_uint32(&hdr.e_phoff, f, hdr.e_ident[EI_DATA]) == 0
+    || read_uint32(&hdr.e_shoff, f, hdr.e_ident[EI_DATA]) == 0
+    || read_uint32(&hdr.e_flags, f, hdr.e_ident[EI_DATA]) == 0
+    || read_uint16(&hdr.e_ehsize, f, hdr.e_ident[EI_DATA]) == 0
+    || read_uint16(&hdr.e_phentsize, f, hdr.e_ident[EI_DATA]) == 0
+    || read_uint16(&hdr.e_phnum, f, hdr.e_ident[EI_DATA]) == 0
+    || read_uint16(&hdr.e_shentsize, f, hdr.e_ident[EI_DATA]) == 0
+    || read_uint16(&hdr.e_shnum, f, hdr.e_ident[EI_DATA]) == 0
+    || read_uint16(&hdr.e_shstrndx, f, hdr.e_ident[EI_DATA]) == 0) {
+        fprintf(stderr, "Error: %s: Failed to read file header\n", nom_fichier);
+        exit(EXIT_FAILURE);
+    }
+
+    // Fermeture du fichier
+    fclose(f);
+
+    // Affichage de l'entête
+    printf("ELF Header:\n");
+
+    printf("  Magic:   %02x %02x %02x %02x %02x %02x %02x ",
+        hdr.e_ident[EI_MAG0], hdr.e_ident[EI_MAG1], hdr.e_ident[EI_MAG2], hdr.e_ident[EI_MAG3],
+        hdr.e_ident[EI_CLASS], hdr.e_ident[EI_DATA], hdr.e_ident[EI_VERSION]
+    );
+    for (int i = EI_PAD; i < EI_NIDENT; i++) {
+        printf("%02x ", hdr.e_ident[i]);
+    }
+    printf("\n");
+
+    printf("  Class:                             ");
+    switch (hdr.e_ident[EI_CLASS]) {
+    case ELFCLASSNONE:
+        printf("none\n");
         break;
-    
+    case ELFCLASS32:
+        printf("ELF32\n");
+        break;
+    case ELFCLASS64:
+        printf("ELF64\n");
+        break;
     default:
-        break;
+        printf("<unknown: %x>\n", hdr.e_ident[EI_CLASS]);
     }
 
-    fread(&data, sizeof(char), 1, fic);
-    printf("Données : ");
-    switch (data)
-    {
-    case 0:
-        printf("invalide !\n");
+    printf("  Data:                              ");
+    switch (hdr.e_ident[EI_DATA]) {
+    case ELFDATANONE:
+        printf("none\n");
         break;
-
-    case 1:
-        printf("Little endian\n");
+    case ELFDATA2LSB:
+        printf("2's complement, little endian\n");
         break;
-
-    case 2:
-        printf("Big endian\n");
+    case ELFDATA2MSB:
+        printf("2's complement, big endian\n");
         break;
-    
     default:
-        break;
+        printf("<unknown: %x>\n", hdr.e_ident[EI_DATA]);
     }
 
-    fread(&version, sizeof(char), 1, fic);
-    printf("Version : ");
-    switch (version)
-    {
-    case 0:
-        printf("invalide !\n");
+    printf("  Version:                           ");
+    switch (hdr.e_ident[EI_VERSION]) {
+    case EV_NONE:
+        printf("0\n");
         break;
-
-    case 1:
-        printf("actuelle\n");
+    case EV_CURRENT:
+        printf("1 (current)\n");
         break;
-    
     default:
-        break;
+        printf("%d <unknown: %%lx>\n", hdr.e_ident[EI_VERSION]);
     }
 
-    
-    for (int i = 0; i < 9; i++)
-    {
-        fread(&pad, sizeof(char), 1, fic);
-    }
-    fread(&type, sizeof(uint16_t), 1, fic);
-    printf("Type : ");
-    switch (type)
-    {
-    case 0:
-        printf("Sans type\n");
-        break;
+    printf("  OS/ABI:                            UNIX - System V\n");
+    printf("  ABI Version:                       0\n");
 
-    case 1:
-        printf("Relogeable\n");
+    printf("  Type:                              ");
+    switch (hdr.e_type) {
+    case ET_NONE:
+        printf("NONE (None)\n");
         break;
-    
-    case 2:
-        printf("Executable\n");
+    case ET_REL:
+        printf("REL (Relocatable file)\n");
         break;
-    
-    case 3:
-        printf("Objet partage\n");
+    case ET_EXEC:
+        printf("EXEC (Executable file)\n");
         break;
-    
-    case 4:
-        printf("Core\n");
+    case ET_DYN:
+        printf("DYN (Shared object file)\n");
         break;
-    
+    case ET_CORE:
+        printf("CORE (Core file)\n");
+        break;
+    case ET_LOPROC:
+        printf("Processor Specific: (ff00)\n");
+        break;
+    case ET_HIPROC:
+        printf("Processor Specific: (ffff)\n");
+        break;
     default:
-        break;
+        printf("<unknown>: %x\n", hdr.e_type);
     }
 
-    fread(&machine, sizeof(uint16_t), 1, fic);
-    printf("Machine : ");
-    switch (machine)
-    {
-    case 0:
-        printf("Sans machine\n");
+    printf("  Machine:                           ");
+    switch (hdr.e_machine) {
+    case EM_NONE:
+        printf("None\n");
         break;
-
-    case 1:
-        printf("AT&T WE 32100\n");
+    case EM_M32:
+        printf("WE32100\n");
         break;
-    
-    case 2:
-        printf("SPARC\n");
+    case EM_SPARC:
+        printf("Sparc\n");
         break;
-    
-    case 3:
-        printf("Intel Architecture\n");
+    case EM_386:
+        printf("Intel 80386\n");
         break;
-    
-    case 4:
-        printf("Motorola 68000\n");
+    case EM_68K:
+        printf("MC68000\n");
         break;
-    
-    case 5:
-        printf("Motorola 88000\n");
+    case EM_88K:
+        printf("MC88000\n");
         break;
-    
-    case 7:
+    case EM_860:
         printf("Intel 80860\n");
         break;
-    
-    case 8:
-        printf("MIPS RS3000 Big-Endian\n");
+    case EM_MIPS:
+        printf("MIPS R3000\n");
         break;
-    
-    case 10:
-        printf("MIPS RS4000 Big-Endian\n");
+    case EM_MIPS_RS4_BE:
+        printf("MIPS R4000 big-endian\n");
         break;
-
-    case 62:
-        printf("Advanced Micro Devices X86-64\n");
+    case EM_ARM:
+        printf("ARM\n");
         break;
-    
     default:
-        break;
+        printf("<unknown>: 0x%x\n", hdr.e_machine);
     }
 
-    fread(&version2, sizeof(uint32_t), 1, fic);
-    printf("Version : ");
-    switch (version2)
-    {
-    case 0:
-        printf("invalide !\n");
-        break;
-
-    case 1:
-        printf("actuelle\n");
-        break;
-    
-    default:
-        break;
-    }
-
-
-    fread(&entree, sizeof(uint32_t), 1, fic);
-    printf("Adresse du point d'entrée : 0x%d\n", entree);
-
-    fread(&progtete, sizeof(uint32_t), 1, fic);
-    printf("Adresse de l'en-tête du programme : %d\n", progtete);
-
-    fread(&pad, sizeof(uint32_t), 1, fic);
-    fread(&flags, sizeof(uint32_t), 1, fic);
-    fread(&secttete, sizeof(uint16_t), 1, fic);
-    printf("Début de l'en-tête de la section : %d\n", secttete);
-    printf("Adresse des flags : 0x%d\n", flags);
-
-    fread(&pad, sizeof(uint16_t), 1, fic);
-    fread(&pad, sizeof(uint16_t), 1, fic);
-    fread(&pad, sizeof(uint16_t), 1, fic);
-    fread(&pad, sizeof(uint16_t), 1, fic);
-    fread(&pad, sizeof(uint16_t), 1, fic);
-    fread(&taille, sizeof(uint16_t), 1, fic);
-    printf("Taille : %d\n", taille);
-
-    fread(&phentsize, sizeof(uint16_t), 1, fic);
-    printf("Taille de l'en-tête du programme : %d\n", phentsize);
-
-    fread(&phnum, sizeof(uint16_t), 1, fic);
-    printf("Nombre d'en-tête du programme : %d\n", phnum);
-
-    fread(&shentsize, sizeof(uint16_t), 1, fic);
-    printf("Taille de l'en-tête des sections : %d\n", shentsize);
-
-    fread(&shnum, sizeof(uint16_t), 1, fic);
-    printf("Nombre d'en-tête des sections : %d\n", shnum);
-
-    fread(&shstrndx, sizeof(uint16_t), 1, fic);
-    printf("Table d'index des chaînes d'en-tête de section : %d\n", shstrndx);
-
-    fclose(fic);
-    return 0;
+    printf("  Version:                           0x%x\n", hdr.e_version);
+    printf("  Entry point address:               0x%x\n", hdr.e_entry);
+    printf("  Start of program headers:          %u (bytes into file)\n", hdr.e_phoff);
+    printf("  Start of section headers:          %u (bytes into file)\n", hdr.e_shoff);
+    printf("  Flags:                             0x%x\n", hdr.e_flags);
+    printf("  Size of this header:               %u (bytes)\n", hdr.e_ehsize);
+    printf("  Size of program headers:           %u (bytes)\n", hdr.e_phentsize);
+    printf("  Number of program headers:         %u\n", hdr.e_phnum);
+    printf("  Size of section headers:           %u (bytes)\n", hdr.e_shentsize);
+    printf("  Number of section headers:         %u\n", hdr.e_shnum);
+    printf("  Section header string table index: %u\n", hdr.e_shstrndx);
 }
