@@ -137,7 +137,7 @@ typedef struct
 //      RESERVED        41-243  Other Machine
 
 /* e_version */
-#define EV_NONE 0    /* Invalid versionn */
+#define EV_NONE 0    /* Invalid version */
 #define EV_CURRENT 1 /* Current version */
 
 /* e_entry */
@@ -162,5 +162,290 @@ typedef struct
 
 int main(int argc, char const *argv[])
 {
+    FILE *fic;
+    Elf32_Ehdr elf32;
+
+    fic = fopen("example1.o", "rb");
+
+    if (fic == NULL)
+    {
+        fprintf(stderr, "Erreur d'ouverture du fichier\n");
+        exit(EXIT_FAILURE);
+    }
+
+    printf("ELF Header:\n");
+
+    fread(&elf32, sizeof(elf32), 1, fic);
+
+    /* Magic */
+    printf("  Magic:   %.2x %.2x %.2x %.2x %.2x %.2x %.2x %.2x %.2x %.2x %.2x %.2x %.2x %.2x %.2x %.2x\n", elf32.e_ident[0], elf32.e_ident[1], elf32.e_ident[2], elf32.e_ident[3], elf32.e_ident[4], elf32.e_ident[5], elf32.e_ident[6], elf32.e_ident[7], elf32.e_ident[8], elf32.e_ident[9], elf32.e_ident[10], elf32.e_ident[11], elf32.e_ident[12], elf32.e_ident[13], elf32.e_ident[14], elf32.e_ident[15]);
+    
+    /* Class */
+    printf("  Class:\t\t\t\t");
+    switch (elf32.e_ident[4])
+    {
+    case 0:
+        printf("Invalid class\n");
+        break;
+
+    case 1:
+        printf("ELF32\n");
+        break;
+
+    case 2:
+        printf("ELF64\n");
+        break;
+    
+    default:
+        break;
+    }
+
+    /* Data */
+    printf("  Data:\t\t\t\t");
+    switch (elf32.e_ident[5])
+    {
+    case 0:
+        printf("\tInvalid data encoding\n");
+        break;
+
+    case 1:
+        printf("\tLittle endian\n");
+        break;
+
+    case 2:
+        printf("\tBig endian\n");
+        break;
+    
+    default:
+        break;
+    }
+
+    /* Version */
+    printf("  Version:\t\t\t");
+    switch (elf32.e_ident[6])
+    {
+    case 0:
+        printf("\t%d (Invalid)\n", elf32.e_ident[6]);
+        break;
+
+    case 1:
+        printf("\t%d (Current)\n", elf32.e_ident[6]);
+        break;
+    
+    default:
+        break;
+    }
+
+    /* OS/ABI */
+    printf("  OS/ABI:\t\t\t\t"); 
+    switch (elf32.e_ident[7])
+    {
+    case 0:
+        printf("No extensions or unspecified\n");
+        break;
+
+    case 1:
+        printf("Hewlett-Packard HP-UX\n");
+        break;
+
+    case 2:
+        printf("NetBSD\n");
+        break;
+    
+    case 3:
+        printf("GNU - Linux\n");
+        break;
+    
+    case 6:
+        printf("Sun Solaris\n");
+        break;
+
+    case 7:
+        printf("AIX\n");
+        break;
+
+    case 8:
+        printf("IRIX\n");
+        break;
+
+    case 9:
+        printf("FreeBSD\n");
+        break;
+    
+    case 10:
+        printf("Compaq TRU64 UNIX\n");
+        break;
+    
+    case 11:
+        printf("Novell Modesto\n");
+        break;
+
+    case 12:
+        printf("Open BSD\n");
+        break;
+
+    case 13:
+        printf("Open VMS\n");
+        break;
+
+    case 14:
+        printf("Hewlett-Packard Non-Stop Kernel\n");
+        break;
+    
+    case 15:
+        printf("Amiga Research OS\n");
+        break;
+    
+    case 16:
+        printf("The FenixOS highly scalable multi-core OS\n");
+        break;
+    
+    case 17:
+        printf("Nuxi CloudABI\n");
+        break;
+        
+    case 18:
+        printf("Stratus Technologies OpenVOS\n");
+        break;
+    
+    default:
+        printf("Architecture-specific value range\n");
+        break;
+    }
+
+    /* ABI Version */
+    printf("  ABI Version:\t\t\t\t%d\n", elf32.e_ident[8]);
+
+    /* Type */
+    printf("  Type:\t\t\t");
+    switch (elf32.e_type)
+    {
+    case 0:
+        printf("No file type\n");
+        break;
+
+    case 1:
+        printf("Relocatable file\n");
+        break;
+
+    case 2:
+        printf("Executable file\n");
+        break;
+
+    case 3:
+        printf("Shared object file\n");
+        break;
+    
+    case 4:
+        printf("Core file\n");
+        break;
+
+    case 0xfe00:
+        printf("Operating system-specific\n");
+        break;
+
+    case 0xfeff:
+        printf("Operating system-specific\n");
+        break;
+
+    case 0xff00:
+        printf("Processor-specific\n");
+        break;
+
+    case 0xffff:
+        printf("Processor-specific\n");
+        break;
+
+    default:
+        printf("val: %d\n", elf32.e_type);
+        break;
+    }
+
+    /* Machine */
+    printf("  Machine:\t\t\t");
+    switch (elf32.e_type)
+    {
+    case 0:
+        printf("No machine\n");
+        break;
+
+    case 1:
+        printf("\tAT&T WE 32100\n");
+        break;
+
+    case 2:
+        printf("\tSPARC\n");
+        break;
+
+    case 3:
+        printf("\tIntel Architecture\n");
+        break;
+    
+    case 4:
+        printf("\tMotorola 68000\n");
+        break;
+    
+    case 5:
+        printf("\tMotorola 88000\n");
+        break;
+
+    case 6:
+        printf("\tIntel MCU\n");
+        break;
+
+    case 7:
+        printf("\tIntel 80860\n");
+        break;
+
+    case 8:
+        printf("\tMIPS RS3000 Big-Endian\n");
+        break;
+    
+    case 9:
+        printf("\tIBM System/370 Processor\n");
+        break;
+
+    case 10:
+        printf("\tMIPS RS4000 Big-Endian\n");
+        break;
+    
+    case 40:
+        printf("\tARM 32-bit architecture (AARCH32)\n");
+        break;
+    
+    default:
+        printf("\tOther Machine\n");
+        break;
+    }
+
+    /* Version */
+    printf("  Version:\t\t\t\t0x%1x\n", elf32.e_version);
+
+    /* Entry point address */
+    printf("  Entry point address:\t\t\t0x%1x\n", elf32.e_entry);
+
+    /* AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA */
+    /* Start of program headers */
+    printf("  Start of program headers:\t\t%d\n", elf32.e_phoff);
+
+    /* Start of section headers */
+    printf("  Start of section headers:\t\t%d\n", elf32.e_shoff);
+
+    /* Flags */
+    printf("  Flags:\t\t\t\t0x%1.7x\n", elf32.e_flags);
+
+
+    printf("  Size of this header:\t\t%d\n", elf32.e_ehsize);
+
+    printf("  Size of program headers:\t\t%d\n", elf32.e_phentsize);
+
+    printf("  Number of program headers:\t\t%d\n", elf32.e_phnum);
+
+    printf("  Size of section headers:\t\t%d\n", elf32.e_shentsize);
+
+    printf("  Number of section headers:\t\t%d\n", elf32.e_shnum);
+
+    printf("  Section header string table index:\t%d\n", elf32.e_shstrndx);
+
     return 0;
 }
