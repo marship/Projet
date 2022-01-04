@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include "lecture_entete.h"
-#include "entete_elf.h"
+#include "elf_header.h"
 
 
 int read_uint16(uint16_t *ptr, FILE *stream, unsigned char endian) {
