@@ -160,6 +160,14 @@ typedef struct
 
 /* e_shstrndx */
 
+int bigToLittle(int big) {
+
+    int bigEndian = big;
+    int little = (((big & 0xff)<<8) | ((big & 0xff00)>>8));
+    return little;
+
+}
+
 int main(int argc, char const *argv[])
 {
     FILE *fic;
@@ -317,8 +325,8 @@ int main(int argc, char const *argv[])
     printf("  ABI Version:\t\t\t\t%d\n", elf32.e_ident[8]);
 
     /* Type */
-    printf("  Type:\t\t\t");
-    switch (elf32.e_type)
+    printf("  Type:\t\t\t\t\t");
+    switch (bigToLittle(elf32.e_type))
     {
     case 0:
         printf("No file type\n");
@@ -357,13 +365,13 @@ int main(int argc, char const *argv[])
         break;
 
     default:
-        printf("val: %d\n", elf32.e_type);
+        printf("val: %4x\n", elf32.e_type);
         break;
     }
 
     /* Machine */
     printf("  Machine:\t\t\t");
-    switch (elf32.e_type)
+    switch (bigToLittle(elf32.e_machine))
     {
     case 0:
         printf("No machine\n");
@@ -419,10 +427,14 @@ int main(int argc, char const *argv[])
     }
 
     /* Version */
-    printf("  Version:\t\t\t\t0x%1x\n", elf32.e_version);
+    printf("  Version:\t\t\t\t0x%1x\n", bigToLittle(elf32.e_version));
+    printf("Test1: %x", elf32.e_version); 
+    printf("Test1: %x", bigToLittle(elf32.e_version));    
+
+// TO DO !!!!!!!!!!!!!!!!!!!!!!!
 
     /* Entry point address */
-    printf("  Entry point address:\t\t\t0x%1x\n", elf32.e_entry);
+    printf("  Entry point address:\t\t\t0x%1x\n", bigToLittle(elf32.e_entry));
 
     /* AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA */
     /* Start of program headers */
