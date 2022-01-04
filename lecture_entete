@@ -25,14 +25,8 @@ int main(void) {
     uint16_t shentsize;
     uint16_t shnum;
     uint16_t shstrndx;
-    uint16_t a;
-    uint16_t b;
-    uint16_t c;
-    uint16_t d;
-    uint16_t fzz;
-    uint16_t ehjf;
 
-    fic = fopen("ARM_runner_example.o", "rb");
+    fic = fopen("csapp.o", "rb");
 
     if(fic == NULL){
         fprintf(stderr, "faux\n");
@@ -43,33 +37,8 @@ int main(void) {
     fread(&e, sizeof(char), 1, fic);
     fread(&l, sizeof(char), 1, fic);
     fread(&f, sizeof(char), 1, fic);
+    
     fread(&class, sizeof(char), 1, fic);
-    fread(&data, sizeof(char), 1, fic);
-    fread(&version, sizeof(char), 1, fic);
-    for (int i = 0; i < 9; i++)
-    {
-        fread(&pad, sizeof(char), 1, fic);
-    }
-    fread(&type, sizeof(uint16_t), 1, fic);
-    fread(&machine, sizeof(uint16_t), 1, fic);
-    fread(&version2, sizeof(uint32_t), 1, fic);
-    fread(&entree, sizeof(uint32_t), 1, fic);
-    fread(&progtete, sizeof(uint32_t), 1, fic);
-    fread(&pad, sizeof(uint32_t), 1, fic);
-    fread(&flags, sizeof(uint32_t), 1, fic);
-    fread(&secttete, sizeof(uint16_t), 1, fic);
-    fread(&pad, sizeof(uint16_t), 1, fic);
-    fread(&pad, sizeof(uint16_t), 1, fic);
-    fread(&pad, sizeof(uint16_t), 1, fic);
-    fread(&pad, sizeof(uint16_t), 1, fic);
-    fread(&pad, sizeof(uint16_t), 1, fic);
-    fread(&taille, sizeof(uint16_t), 1, fic);
-    fread(&phentsize, sizeof(uint16_t), 1, fic);
-    fread(&phnum, sizeof(uint16_t), 1, fic);
-    fread(&shentsize, sizeof(uint16_t), 1, fic);
-    fread(&shnum, sizeof(uint16_t), 1, fic);
-    fread(&shstrndx, sizeof(uint16_t), 1, fic);
-
     printf("Classe : ");
     switch (class)
     {
@@ -89,6 +58,7 @@ int main(void) {
         break;
     }
 
+    fread(&data, sizeof(char), 1, fic);
     printf("Données : ");
     switch (data)
     {
@@ -108,6 +78,7 @@ int main(void) {
         break;
     }
 
+    fread(&version, sizeof(char), 1, fic);
     printf("Version : ");
     switch (version)
     {
@@ -123,6 +94,12 @@ int main(void) {
         break;
     }
 
+    
+    for (int i = 0; i < 9; i++)
+    {
+        fread(&pad, sizeof(char), 1, fic);
+    }
+    fread(&type, sizeof(uint16_t), 1, fic);
     printf("Type : ");
     switch (type)
     {
@@ -150,6 +127,7 @@ int main(void) {
         break;
     }
 
+    fread(&machine, sizeof(uint16_t), 1, fic);
     printf("Machine : ");
     switch (machine)
     {
@@ -197,6 +175,7 @@ int main(void) {
         break;
     }
 
+    fread(&version2, sizeof(uint32_t), 1, fic);
     printf("Version : ");
     switch (version2)
     {
@@ -212,15 +191,40 @@ int main(void) {
         break;
     }
 
+
+    fread(&entree, sizeof(uint32_t), 1, fic);
     printf("Adresse du point d'entrée : 0x%d\n", entree);
+
+    fread(&progtete, sizeof(uint32_t), 1, fic);
     printf("Adresse de l'en-tête du programme : %d\n", progtete);
+
+    fread(&pad, sizeof(uint32_t), 1, fic);
+    fread(&flags, sizeof(uint32_t), 1, fic);
+    fread(&secttete, sizeof(uint16_t), 1, fic);
     printf("Début de l'en-tête de la section : %d\n", secttete);
     printf("Adresse des flags : 0x%d\n", flags);
+
+    fread(&pad, sizeof(uint16_t), 1, fic);
+    fread(&pad, sizeof(uint16_t), 1, fic);
+    fread(&pad, sizeof(uint16_t), 1, fic);
+    fread(&pad, sizeof(uint16_t), 1, fic);
+    fread(&pad, sizeof(uint16_t), 1, fic);
+    fread(&taille, sizeof(uint16_t), 1, fic);
     printf("Taille : %d\n", taille);
+
+    fread(&phentsize, sizeof(uint16_t), 1, fic);
     printf("Taille de l'en-tête du programme : %d\n", phentsize);
+
+    fread(&phnum, sizeof(uint16_t), 1, fic);
     printf("Nombre d'en-tête du programme : %d\n", phnum);
+
+    fread(&shentsize, sizeof(uint16_t), 1, fic);
     printf("Taille de l'en-tête des sections : %d\n", shentsize);
+
+    fread(&shnum, sizeof(uint16_t), 1, fic);
     printf("Nombre d'en-tête des sections : %d\n", shnum);
+
+    fread(&shstrndx, sizeof(uint16_t), 1, fic);
     printf("Table d'index des chaînes d'en-tête de section : %d\n", shstrndx);
 
     fclose(fic);
