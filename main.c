@@ -15,6 +15,7 @@ void usage(char *name)
             "\n"
             "Options:\n"
             "  -h --file-header       Afficher l'en-tête du fichier ELF\n"
+            "  -s --table-symbole     Afficher la table des symboles\n"
             "  -H --help              Afficher l'aide-mémoire\n",
             name);
 }
@@ -34,17 +35,22 @@ int main(int argc, char **argv)
 
 	struct option longopts[] = {
 		{ "file-header", required_argument, NULL, 'h' },
+        { "table-symbole", required_argument, NULL, 's' },
 		{ "help", no_argument, NULL, 'H' },
 		{ NULL, 0, NULL, 0 }
 	};
 
-	while ((opt = getopt_long(argc, argv, "h:H", longopts, NULL)) != -1) {
+	while ((opt = getopt_long(argc, argv, "h:s:H", longopts, NULL)) != -1) {
 		switch(opt) {
 		case 'h':
 			nom_fichier = optarg;
             ehdr = lire_entete(nom_fichier);
 			afficher_entete(ehdr);
 			break;
+        case 's':
+			nom_fichier = optarg;
+            lire_symbole(nom_fichier);
+            break;
 		case 'H':
 			usage(argv[0]);
 			return EXIT_SUCCESS;
