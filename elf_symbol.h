@@ -13,6 +13,8 @@
     3:  Répéter pour le nombre de symbole -> lecture, ...
 */
 
+    
+
 /* ELF32 Structure de la table des symboles en 32-bit (Couleur cf Schéma) */
 typedef struct {
     Elf32_Word st_name;     /* (4 octets ORANGE)    Symbol name             */  // NOM Symbole          CF STRING TABLE
