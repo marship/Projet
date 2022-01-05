@@ -4,7 +4,7 @@
 #include "lecture_symbole.h"
 #include "fonctions_utilitaires.h"
 
-void lire_symbole(char *nom_fichier, Elf32_Ehdr ehdr, Elf32_Shdr *shdr)
+void *lire_symbole(char *nom_fichier, Elf32_Ehdr ehdr, Elf32_Shdr *shdr)
 {
     FILE *f;
     int i = 0;
