@@ -2,11 +2,10 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include "lecture_entete.h"
-#include "elf_header.h"
 #include "fonctions_utilitaires.h"
 
 
-void lire_entete(char *nom_fichier) {
+Elf32_Ehdr lire_entete(char *nom_fichier) {
     FILE *f;
     Elf32_Ehdr hdr;
 
@@ -54,6 +53,10 @@ void lire_entete(char *nom_fichier) {
     // Fermeture du fichier
     fclose(f);
 
+    return hdr;
+}
+
+void afficher_entete(Elf32_Ehdr hdr) {
     // Affichage de l'entête
     printf("ELF Header:\n");
 

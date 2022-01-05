@@ -22,6 +22,7 @@ int main(int argc, char **argv) {
 
 	int opt;
 	char *nom_fichier = NULL;
+	Elf32_Ehdr ehdr;
 
     if (argc < 2) {
         usage(argv[0]);
@@ -38,7 +39,8 @@ int main(int argc, char **argv) {
 		switch(opt) {
 		case 'h':
 			nom_fichier = optarg;
-            lire_entete(nom_fichier);
+            ehdr = lire_entete(nom_fichier);
+			afficher_entete(ehdr);
 			break;
 		case 'H':
 			usage(argv[0]);
