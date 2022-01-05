@@ -30,9 +30,9 @@ void lire_symbole(char *nom_fichier)
     fseek(Handle, hex2dec(buff), SEEK_SET);
 
     printf("\n");
-    printf("[Nr] Name\t\t\tType\t\t\tAddr\t\t\tOff\t\t\tSize\t\t\tES\tFlg\tLk\tInf\tAl\t\n");
+    printf("[Nr]\tName\tType\tAddr\tSize\n");
 
-    printf("[ 0] \t\t\t\tNULL\t\t\t00000000\t\t000000\t\t\t000000\t\t\t00\t\t0\t0\t0\t\n");
+    printf("[0]\tNULL\tNULL\t000000\t000000\n");
 
     // Lecture des valeurs souhaitées
     for (int i = 1; i < nbSymbole; i++)
@@ -50,7 +50,75 @@ void lire_symbole(char *nom_fichier)
             exit(EXIT_FAILURE);
         }
 
-        printf("[%d] Name\t\t\tType\t\t\tAddr\t\t\tOff\t\t\tSize\t\t\tES\tFlg\tLk\tInf\tAl\t\n", i);
+        printf("[%d]\t", i);
+        printf("Name\t");
+
+        switch (ELF32_ST_TYPE(sym.st_info))
+        {
+        case STT_NOTYPE:
+            printf("Sans\t");
+            break;
+        
+        case STT_OBJECT:
+            printf("Objet\t");
+            break;
+
+        case STT_FUNC:
+            printf("Fonction\t");
+            break;
+
+        case STT_SECTION:
+            printf("Section\t");
+            break;
+
+        case STT_FILE:
+            printf("File\t");
+            break;
+
+        case STT_LOPROC:
+            printf("Loproc\t");
+            break;
+
+        case STT_HIPROC:
+            printf("Hiproc\t");
+            break;
+        
+        default:
+            printf("Inconnu\t");
+            break;
+        }
+
+        printf("%x\t", sym.st_value);
+        printf("Off");
+        printf("%d\n", sym.st_size);
+        /*
+        switch (ELF32_ST_BIND(sym.st_info))
+        {
+        case STB_LOCAL:
+            printf("Local\t");
+            break;
+        
+        case STB_GLOBAL:
+            printf("Global\t");
+            break;
+
+        case STB_WEAK:
+            printf("Weak\t");
+            break;
+
+        case STB_LOPROC:
+            printf("Loproc\t");
+            break;
+
+        case STB_HIPROC:
+            printf("Hiproc\t");
+            break;
+        
+        default:
+            break;
+        } */
+
+        //printf("[%d] Name\t\tType\t\tAddr\t\tOff\t\tSize\t\tES\tFlg\tLk\tInf\tAl\t\n", i);
         // TO DO !!!
     }
 
