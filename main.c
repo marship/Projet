@@ -7,6 +7,7 @@
 #include "fonctions_utilitaires.h"
 #include "lecture_symbole.h"
 
+
 void usage(char *name)
 {
     fprintf(stderr,
