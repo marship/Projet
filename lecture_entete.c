@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include "lecture_entete.h"
 #include "elf_header.h"
-
+#include "fonctions_utilitaires.h"
 
 int read_uint16(uint16_t *ptr, FILE *stream, unsigned char endian) {
     if (endian < ELFDATA2LSB || endian > ELFDATA2MSB) {

@@ -4,6 +4,7 @@
 #include <getopt.h>
 #include "lecture_entete.h"
 #include "elf_header.h"
+#include "fonctions_utilitaires.h"
 
 
 void usage(char *name) {
@@ -18,6 +19,7 @@ void usage(char *name) {
 }
 
 int main(int argc, char **argv) {
+
 	int opt;
 	char *nom_fichier = NULL;
 

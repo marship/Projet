@@ -5,14 +5,22 @@
 
 #define STN_UNDEF 0
 
-/* ELF32 Structure de la table des symboles en 32-bit */
+/*
+    Plan d'attaque de la table des symboles
+
+    1:  Chopper l'adresse de la table des symboles (dans l'entête de section)
+    2:  Chopper les nombre de symbole (TailleTotalSymbole / TailleEntreDeSymbole) (dans l'entête de section)
+    3:  Répéter pour le nombre de symbole -> lecture, ...
+*/
+
+/* ELF32 Structure de la table des symboles en 32-bit (Couleur cf Schéma) */
 typedef struct {
-    Elf32_Word st_name;
-    Elf32_Addr st_value;
-    Elf32_Word st_size;
-    unsigned char st_info;
-    unsigned char st_other;
-    Elf32_Half st_shndx;
+    Elf32_Word st_name;     /* (4 octets ORANGE)    Symbol name             */  // NOM Symbole          CF STRING TABLE
+    Elf32_Addr st_value;    /* (8 octets ROUGE)     Symbol value            */  // Valeur Symbole
+    Elf32_Word st_size;     /* (8 octets BLEU)      Symbol size             */  // Taille Symbole
+    unsigned char st_info;  /* (1 octets ROSE)      Symbol type and binding */  // Attribut Symbole
+    unsigned char st_other; /* (1 octets VERT)      Symbol visibility       */  // Attribut Symbole
+    Elf32_Half st_shndx;    /* (2 octets JAUNE)     Section index           */  // Attribut Symbole
 } Elf32_Sym;
 
 /* st_info */
@@ -22,36 +30,41 @@ typedef struct {
 
 /* st_other */
 #define ELF32_ST_VISIBILITY(o) ((o)&0x3)
-#define ELF64_ST_VISIBILITY(o) ((o)&0x3)
 
 /* Symbol Binding, ELF32_ST_BIND */
-#define STB_LOCAL 0
-#define STB_GLOBAL 1
-#define STB_WEAK 2
-#define STB_LOPROC 13
-#define STB_HIPROC 15
+#define STB_LOCAL   0
+#define STB_GLOBAL  1
+#define STB_WEAK    2
+#define STB_LOPROC  13
+#define STB_HIPROC  15
 
 /* Symbol Types, ELF32_ST_TYPE */
-#define STT_NOTYPE 0
-#define STT_OBJECT 1
-#define STT_FUNC 2
+#define STT_NOTYPE  0
+#define STT_OBJECT  1
+#define STT_FUNC    2
 #define STT_SECTION 3
-#define STT_FILE 4
-#define STT_LOPROC 13
-#define STT_HIPROC 15
+#define STT_FILE    4
+#define STT_LOPROC  13
+#define STT_HIPROC  15
 
 /* Symbol Table Entry: Index 0 */
-#define st_name 0 // No name
-#define st_value 0 // Zero value
-#define st_size 0 // No size
-#define st_info 0 // No type, local binding
-#define st_other 0
-#define st_shndx // SHN_UNDEF No section
+#define st_name     0 // No name
+#define st_value    0 // Zero value
+#define st_size     0 // No size
+#define st_info     0 // No type, local binding
+#define st_other    0
+#define st_shndx    // SHN_UNDEF No section
 
 /* Symbol Visibility */
 #define STV_DEFAULT 0
 #define STV_INTERNAL 1
 #define STV_HIDDEN 2
 #define STV_PROTECTED 3
+// OU
+/* Symbol Visibility */
+#define STV_DEFAULT 0x00
+#define STV_INTERNAL 0x01
+#define STV_HIDDEN 0x02
+#define STV_PROTECTED 0x03
 
 #endif
