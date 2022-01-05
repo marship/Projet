@@ -5,46 +5,6 @@
 #include "elf_header.h"
 #include "fonctions_utilitaires.h"
 
-int read_uint16(uint16_t *ptr, FILE *stream, unsigned char endian) {
-    if (endian < ELFDATA2LSB || endian > ELFDATA2MSB) {
-        return fread(ptr, sizeof(uint16_t), 1, stream);
-    }
-
-    unsigned char b1, b2;
-
-    if (fread(&b1, sizeof(char), 1, stream) == 0 || fread(&b2, sizeof(char), 1, stream) == 0) {
-        return 0;
-    }
-
-    if (endian == ELFDATA2LSB) {
-        *ptr = ((uint16_t) b2) << 8 | (uint16_t) b1;
-    }
-    else {
-        *ptr = ((uint16_t) b1) << 8 | (uint16_t) b2;
-    }
-    return 1;
-}
-
-int read_uint32(uint32_t *ptr, FILE *stream, unsigned char endian) {
-    if (endian < ELFDATA2LSB || endian > ELFDATA2MSB) {
-        return fread(ptr, sizeof(uint32_t), 1, stream);
-    }
-
-    unsigned char b1, b2, b3, b4;
-
-    if (fread(&b1, sizeof(char), 1, stream) == 0 || fread(&b2, sizeof(char), 1, stream) == 0
-    || fread(&b3, sizeof(char), 1, stream) == 0 || fread(&b4, sizeof(char), 1, stream) == 0) {
-        return 0;
-    }
-
-    if (endian == ELFDATA2LSB) {
-        *ptr = ((uint32_t) b4) << 24 | ((uint32_t) b3) << 16 | ((uint32_t) b2) << 8 | (uint32_t) b1;
-    }
-    else {
-        *ptr = ((uint32_t) b1) << 24 | ((uint32_t) b2) << 16 | ((uint32_t) b3) << 8 | (uint32_t) b4;
-    }
-    return 1;
-}
 
 void lire_entete(char *nom_fichier) {
     FILE *f;
