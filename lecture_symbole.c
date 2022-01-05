@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include "fonctions_utilitaires.h"
 #include <string.h>
+#include "elf_symbol.h"
 
 void lire_symbole(char *nom_fichier)
 {
@@ -15,34 +16,43 @@ void lire_symbole(char *nom_fichier)
     }
 
     // uint16_t = Paquets de 4 valeurs hexa (1 ligne) /// uint8_t = Paquets de 2 valeurs hexa (1/2 ligne)
-    uint8_t Temp;
+    uint8_t adrTableSymbole = 4;
+    int nbSymbole = 8;
+    char endian = 1;
 
-    char snum[] = "4"; // = 4 en décimal
-    fseek(Handle, hex2dec(snum), SEEK_SET);
+    // Tableau qui va reçevoir l'int convertit en string
+    char buff[20];
 
-    fread(&Temp, sizeof(uint8_t), 1, Handle);
-    printf("Le char à la pos 0 est : %x\n", Temp);
+    // Convertit l'entier passé en paramètre en un string
+    sprintf(buff, "%d", adrTableSymbole);
 
-    fread(&Temp, sizeof(uint8_t), 1, Handle);
-    printf("Le char à la pos 1 est : %x\n", Temp);
+    // Convertion du string en hexa puis positionnement à l'adresse correspondant à l'hexa
+    fseek(Handle, hex2dec(buff), SEEK_SET);
 
-    fread(&Temp, sizeof(uint8_t), 1, Handle);
-    printf("Le char à la pos 2 est : %x\n", Temp);
+    printf("\n");
+    printf("[Nr] Name\t\t\tType\t\t\tAddr\t\t\tOff\t\t\tSize\t\t\tES\tFlg\tLk\tInf\tAl\t\n");
 
-    fread(&Temp, sizeof(uint8_t), 1, Handle);
-    printf("Le char à la pos 3 est : %x\n", Temp);
+    printf("[ 0] \t\t\t\tNULL\t\t\t00000000\t\t000000\t\t\t000000\t\t\t00\t\t0\t0\t0\t\n");
 
-    fread(&Temp, sizeof(uint8_t), 1, Handle);
-    printf("Le char à la pos 4 est : %x\n", Temp);
+    // Lecture des valeurs souhaitées
+    for (int i = 1; i < nbSymbole; i++)
+    {
+        Elf32_Sym sym;
 
-    fread(&Temp, sizeof(uint8_t), 1, Handle);
-    printf("Le char à la pos 5 est : %x\n", Temp);
+        if (read_uint32(&sym.st_name, Handle, endian) == 0 
+        || read_uint32(&sym.st_value, Handle, endian) == 0 
+        || read_uint32(&sym.st_size, Handle, endian) == 0 
+        || fread(&sym.st_info, sizeof(char), 1, Handle) == 0 
+        || fread(&sym.st_other, sizeof(char), 1, Handle) == 0 
+        || read_uint16(&sym.st_shndx, Handle, endian) == 0)
+        {
+            fprintf(stderr, "Error: %s: Failed to read file header\n", nom_fichier);
+            exit(EXIT_FAILURE);
+        }
 
-    fread(&Temp, sizeof(uint8_t), 1, Handle);
-    printf("Le char à la pos 6 est : %x\n", Temp);
-
-    fread(&Temp, sizeof(uint8_t), 1, Handle);
-    printf("Le char à la pos 7 est : %x\n", Temp);
+        printf("[%d] Name\t\t\tType\t\t\tAddr\t\t\tOff\t\t\tSize\t\t\tES\tFlg\tLk\tInf\tAl\t\n", i);
+        // TO DO !!!
+    }
 
     fclose(Handle);
 }

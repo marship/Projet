@@ -18,8 +18,8 @@
 /* ELF32 Structure de la table des symboles en 32-bit (Couleur cf Schéma) */
 typedef struct {
     Elf32_Word st_name;     /* (4 octets ORANGE)    Symbol name             */  // NOM Symbole          CF STRING TABLE
-    Elf32_Addr st_value;    /* (8 octets ROUGE)     Symbol value            */  // Valeur Symbole
-    Elf32_Word st_size;     /* (8 octets BLEU)      Symbol size             */  // Taille Symbole
+    Elf32_Addr st_value;    /* (4 octets ROUGE)     Symbol value            */  // Valeur Symbole
+    Elf32_Word st_size;     /* (4 octets BLEU)      Symbol size             */  // Taille Symbole
     unsigned char st_info;  /* (1 octets ROSE)      Symbol type and binding */  // Attribut Symbole
     unsigned char st_other; /* (1 octets VERT)      Symbol visibility       */  // Attribut Symbole
     Elf32_Half st_shndx;    /* (2 octets JAUNE)     Section index           */  // Attribut Symbole
@@ -49,24 +49,10 @@ typedef struct {
 #define STT_LOPROC  13
 #define STT_HIPROC  15
 
-/* Symbol Table Entry: Index 0 */
-#define st_name     0 // No name
-#define st_value    0 // Zero value
-#define st_size     0 // No size
-#define st_info     0 // No type, local binding
-#define st_other    0
-#define st_shndx    // SHN_UNDEF No section
-
 /* Symbol Visibility */
 #define STV_DEFAULT 0
 #define STV_INTERNAL 1
 #define STV_HIDDEN 2
 #define STV_PROTECTED 3
-// OU
-/* Symbol Visibility */
-#define STV_DEFAULT 0x00
-#define STV_INTERNAL 0x01
-#define STV_HIDDEN 0x02
-#define STV_PROTECTED 0x03
 
 #endif
