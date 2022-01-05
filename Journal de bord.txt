@@ -18,3 +18,11 @@ JOUR2/Mardi
 	bits. Après h passées à chercher du Big Endian au Little Endian, nous sommes parvenus à obtenir une étape  parfaitement fonctionnelle.
 	En se penchant sur l'étape 2, on voit qu'il est nécessaire de lire des données à partir d'une adresse donnée. 
 	On récupère facilement l'adresse grace a la fonction de l'étape 1, mais le problème est de lire à partir d'une certaine adresse, ici celle de la table des sections
+
+JOUR3/Mercredi
+
+	On décide de se répartir le travail de façon à avancer de manière homogène. Un trinome sur la partie 4, un binome sur les parties 2 et 3 et un membre seul sur la partie 5.
+	Une bonne partie du travail consiste a étudier le forme des données à récupérer, afin de savoir comment organiser les données qui seront lues par le programme.
+	Cela aura pris une bonne partie de la matinée. Petit problème en fin de matinée; puisque internet n'était plus disponible a partir de 11h sur les ordinateurs de l'IM2AG. 
+	Nous somme revenus a 12h10, et Internet n'étant toujours revenu, nous avons décidé de continuer en distanciel l'après midi.
+	A la fin de la journée, les parties 4 et 5 ont bien avancé et seront terminées sous peu.
