@@ -1,52 +1,47 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include "lecture_symbole.h"
 #include "fonctions_utilitaires.h"
-#include <string.h>
-#include "elf_symbol.h"
 
-void lire_symbole(char *nom_fichier)
+void lire_symbole(char *nom_fichier, Elf32_Ehdr ehdr, Elf32_Shdr *shdr)
 {
-    FILE *Handle = fopen(nom_fichier, "rb");
+    FILE *f;
+    int i = 0;
+    while(shdr[i].sh_name != ".symtab"){
+        i++;
+    }
 
-    if (Handle == NULL)
-    {
-        fprintf(stderr, "Error: Can't open file %s\n", nom_fichier);
+    // Ouverture du fichier
+    f = fopen(nom_fichier, "rb");
+
+    if (f == NULL) {
+        fprintf(stderr, "Impossible d'ouvir le fichier : %s\n", nom_fichier);
         exit(EXIT_FAILURE);
     }
 
-    // uint16_t = Paquets de 4 valeurs hexa (1 ligne) /// uint8_t = Paquets de 2 valeurs hexa (1/2 ligne)
-    uint8_t adrTableSymbole = 4;
-    int nbSymbole = 8;
-    char endian = 1;
+    if (fseek(f, shdr[i].sh_addr + shdr[i].sh_offset, SEEK_SET) != 0) {
+        fprintf(stderr, "Erreur de lecture du fichier %s\n", nom_fichier);
+        exit(EXIT_FAILURE);
+    }
 
-    // Tableau qui va reçevoir l'int convertit en string
-    char buff[20];
-
-    // Convertit l'entier passé en paramètre en un string
-    sprintf(buff, "%d", adrTableSymbole);
-
-    // Convertion du string en hexa puis positionnement à l'adresse correspondant à l'hexa
-    fseek(Handle, hex2dec(buff), SEEK_SET);
-
-    printf("\n");
     printf("[Nr]\tName\tType\tAddr\tSize\n");
-
     printf("[0]\tNULL\tNULL\t000000\t000000\n");
 
+    int nbSym = shdr[i].sh_size / shdr[i].sh_entsize;
     // Lecture des valeurs souhaitées
-    for (int i = 1; i < nbSymbole; i++)
+    for (int i = 1; i < nbSym; i++)
     {
         Elf32_Sym sym;
 
-        if (read_uint32(&sym.st_name, Handle, endian) == 0 
-        || read_uint32(&sym.st_value, Handle, endian) == 0 
-        || read_uint32(&sym.st_size, Handle, endian) == 0 
-        || fread(&sym.st_info, sizeof(char), 1, Handle) == 0 
-        || fread(&sym.st_other, sizeof(char), 1, Handle) == 0 
-        || read_uint16(&sym.st_shndx, Handle, endian) == 0)
+        if (read_uint32(&sym.st_name, f, ehdr.e_ident[EI_DATA]) == 0 
+        || read_uint32(&sym.st_value, f, ehdr.e_ident[EI_DATA]) == 0 
+        || read_uint32(&sym.st_size, f, ehdr.e_ident[EI_DATA]) == 0 
+        || fread(&sym.st_info, sizeof(char), 1, f) == 0 
+        || fread(&sym.st_other, sizeof(char), 1, f) == 0 
+        || read_uint16(&sym.st_shndx, f, ehdr.e_ident[EI_DATA]) == 0)
         {
-            fprintf(stderr, "Error: %s: Failed to read file header\n", nom_fichier);
+            fprintf(stderr, "Erreur: %s: Echec de la lecteur du symbole\n", nom_fichier);
             exit(EXIT_FAILURE);
         }
 
@@ -122,5 +117,5 @@ void lire_symbole(char *nom_fichier)
         // TO DO !!!
     }
 
-    fclose(Handle);
+    fclose(f);
 }
