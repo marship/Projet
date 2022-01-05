@@ -5,26 +5,29 @@
 #include "lecture_entete.h"
 #include "elf_header.h"
 #include "fonctions_utilitaires.h"
+#include "lecture_symbole.h"
 
-
-void usage(char *name) {
-	fprintf(stderr,
-        "Usage:\n"
-        "  %s <options> fichiers-elf\n"
-        "\n"
-        "Options:\n"
-        "  -h --file-header       Afficher l'en-tête du fichier ELF\n"
-        "  -H --help              Afficher l'aide-mémoire\n"
-		, name);
+void usage(char *name)
+{
+    fprintf(stderr,
+            "Usage:\n"
+            "  %s <options> fichiers-elf\n"
+            "\n"
+            "Options:\n"
+            "  -h --file-header       Afficher l'en-tête du fichier ELF\n"
+            "  -H --help              Afficher l'aide-mémoire\n",
+            name);
 }
 
-int main(int argc, char **argv) {
+int main(int argc, char **argv)
+{
 
 	int opt;
 	char *nom_fichier = NULL;
 	Elf32_Ehdr ehdr;
 
-    if (argc < 2) {
+    if (argc < 2)
+    {
         usage(argv[0]);
         return EXIT_FAILURE;
     }
