@@ -74,3 +74,24 @@ int read_uint32(uint32_t *ptr, FILE *stream, unsigned char endian) {
     }
     return 1;
 }
+
+int read_int32(int32_t *ptr, FILE *stream, unsigned char endian) {
+    if (endian < ELFDATA2LSB || endian > ELFDATA2MSB) {
+        return fread(ptr, sizeof(int32_t), 1, stream);
+    }
+
+    unsigned char b1, b2, b3, b4;
+
+    if (fread(&b1, sizeof(char), 1, stream) == 0 || fread(&b2, sizeof(char), 1, stream) == 0
+    || fread(&b3, sizeof(char), 1, stream) == 0 || fread(&b4, sizeof(char), 1, stream) == 0) {
+        return 0;
+    }
+
+    if (endian == ELFDATA2LSB) {
+        *ptr = ((int32_t) b4) << 24 | ((int32_t) b3) << 16 | ((int32_t) b2) << 8 | (int32_t) b1;
+    }
+    else {
+        *ptr = ((int32_t) b1) << 24 | ((int32_t) b2) << 16 | ((int32_t) b3) << 8 | (int32_t) b4;
+    }
+    return 1;
+}
