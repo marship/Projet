@@ -4,9 +4,19 @@
 #include "elf_relocation.h"
 #include "elf_header.h"
 #include "section_header.h"
+#include "elf_symbol.h"
 
-Elf32_Rel *lire_rel(char *nom_fichier, Elf32_Ehdr ehdr, Elf32_Shdr *shdr);
+typedef union {
+    Elf32_Rel *rel;
+    Elf32_Rela *rela;
+} Relocations;
 
-Elf32_Rela *lire_rela(char *nom_fichier, Elf32_Ehdr ehdr, Elf32_Shdr *shdr);
+
+Relocations *lire_relocations(char *nom_fichier, Elf32_Ehdr ehdr, Elf32_Shdr *shdr);
+
+void liberer_relocations(Relocations *reloc, Elf32_Ehdr ehdr);
+
+void afficher_relocations(Relocations *reloc, Elf32_Ehdr ehdr, Elf32_Shdr *shdr, char *shstrtab, Elf32_Sym *sym);
+
 
 #endif

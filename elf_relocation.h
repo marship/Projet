@@ -20,7 +20,7 @@ typedef struct {
 #define ELF32_R_TYPE(i)   ((unsigned char)(i))
 #define ELF32_R_INFO(s,t) (((s) << 8) + (unsigned char)(t))
 
-/* Relocation codes */
+/* Relocation types */
 #define R_ARM_NONE               0
 #define R_ARM_PC24               1
 #define R_ARM_ABS32              2
@@ -133,10 +133,31 @@ typedef struct {
 #define R_ARM_TLS_LDO12          109
 #define R_ARM_TLS_LE12           110
 #define R_ARM_TLS_IE12GP         111
-
+#define R_ARM_PRIVATE_0          112
+#define R_ARM_PRIVATE_1          113
+#define R_ARM_PRIVATE_2          114
+#define R_ARM_PRIVATE_3          115
+#define R_ARM_PRIVATE_4          116
+#define R_ARM_PRIVATE_5          117
+#define R_ARM_PRIVATE_6          118
+#define R_ARM_PRIVATE_7          119
+#define R_ARM_PRIVATE_8          120
+#define R_ARM_PRIVATE_9          121
+#define R_ARM_PRIVATE_10         122
+#define R_ARM_PRIVATE_11         123
+#define R_ARM_PRIVATE_12         124
+#define R_ARM_PRIVATE_13         125
+#define R_ARM_PRIVATE_14         126
+#define R_ARM_PRIVATE_15         127
 #define R_ARM_ME_TOO             128
 #define R_ARM_THM_TLS_DESCSEQ16  129
 #define R_ARM_THM_TLS_DESCSEQ32  130
 #define R_ARM_THM_GOT_BREL12     131
+#define R_ARM_THM_ALU_ABS_G0_NC  132
+#define R_ARM_THM_ALU_ABS_G1_NC  133
+#define R_ARM_THM_ALU_ABS_G2_NC  134
+#define R_ARM_THM_ALU_ABS_G3     135
+
+#define R_ARM_IRELATIVE          160
 
 #endif
