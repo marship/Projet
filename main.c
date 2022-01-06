@@ -8,6 +8,7 @@
 #include "lecture_symbole.h"
 #include "lecture_reimplantation.h"
 #include "lecture_section.h"
+#include "string_table.h"
 
 
 void usage(char *name)
@@ -32,6 +33,10 @@ int main(int argc, char **argv)
 	char *nom_fichier = NULL;
 	Elf32_Ehdr ehdr;
 	Elf32_Shdr *shdr;
+    // char *strtab = NULL;
+    // char *shstrtab = NULL;
+    // Elf32_Sym *sym;
+    // Relocations *reloc;
 
     if (argc < 2)
     {
@@ -50,26 +55,27 @@ int main(int argc, char **argv)
 
 
 	while ((opt = getopt_long(argc, argv, "h:S:s:r:H", longopts, NULL)) != -1) {
-		switch(opt) {
+		nom_fichier = optarg;
+		ehdr = lire_entete(nom_fichier);
+		shdr = lire_section(nom_fichier, ehdr);
+        // strtab = lire_strtab(shdr, ehdr, nom_fichier);
+        // shstrtab = lire_shstrtab(shdr, ehdr, nom_fichier);
+        // sym = lire_symbole(nom_fichier, ehdr, shdr);
+        // reloc = lire_relocations(nom_fichier, ehdr, shdr);
+
+        switch(opt) {
 		case 'h':
-			nom_fichier = optarg;
-			ehdr = lire_entete(nom_fichier);
 			afficher_entete(ehdr);
 			break;
 
 		case 'S':
-			nom_fichier = optarg;
-            ehdr = lire_entete(nom_fichier);
-			shdr = lire_section(nom_fichier, ehdr);
 			afficher_section(shdr, ehdr);
 			break;
         case 's':
-			nom_fichier = optarg;
-			printf("wesh alors");
-            //lire_symbole(nom_fichier);
+            // afficher_symboles(sym, nom_fichier);
             break;
 		case 'r':
-
+            // afficher_relocations(reloc, ehdr, shdr, shstrtab, sym);
 			break;
 		case 'H':
 			usage(argv[0]);
