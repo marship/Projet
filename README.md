@@ -11,6 +11,11 @@ Lancement du projet de Prog5
 - GLEMBA Adrien
 - LAMBERT Mathis
 
+### Bilan Réunion de Mi-Projet
+
+    - Factoriser les fonctions d'ouverture de fichier pour eviter les répétitions
+    - Automatiser Les Tests (Très utile pour la suite)
+
 ### Historique
 
-16/12/2021 : Création du GitHub / Création du serveur Discord
+cf Journal de bord.txt

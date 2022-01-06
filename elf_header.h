@@ -48,13 +48,13 @@ typedef struct
 #define ELFMAG1 'E'      /* e_ident[EI_MAG1] */
 #define ELFMAG2 'L'      /* e_ident[EI_MAG2] */
 #define ELFMAG3 'F'      /* e_ident[EI_MAG3] */
-#define ELFMAG "\177ELF" /* Identifiant ELF complet en string */
+#define ELFMAG  "\177ELF" /* Identifiant ELF complet en string */
 #define SELFMAG 4        /* Taille de l'identifiant ELF */
 
 /* EI_CLASS */
-#define ELFCLASSNONE 0 /* Invalid class */
-#define ELFCLASS32 1   /* 32-bit objects */
-#define ELFCLASS64 2   /* 64-bit objects */
+#define ELFCLASSNONE    0   /* Invalid class */
+#define ELFCLASS32      1   /* 32-bit objects */
+#define ELFCLASS64      2   /* 64-bit objects */
 
 /* EI_DATA */
 #define ELFDATANONE 0 /* Invalid data encoding */
@@ -62,31 +62,31 @@ typedef struct
 #define ELFDATA2MSB 2 /* Big Endian */
 
 /* e_type */
-#define ET_NONE 0        /* No file type */
-#define ET_REL 1         /* Relocatable file */
-#define ET_EXEC 2        /* Executable file */
-#define ET_DYN 3         /* Shared object file */
-#define ET_CORE 4        /* Core file */
-#define ET_LOPROC 0xff00 /* Processor-specific */
-#define ET_HIPROC 0xffff /* Processor-specific */
+#define ET_NONE     0       /* No file type */
+#define ET_REL      1       /* Relocatable file */
+#define ET_EXEC     2       /* Executable file */
+#define ET_DYN      3       /* Shared object file */
+#define ET_CORE     4       /* Core file */
+#define ET_LOPROC   0xff00  /* Processor-specific */
+#define ET_HIPROC   0xffff  /* Processor-specific */
 
 /* e_machine */
-#define EM_NONE 0         /* No machine */
-#define EM_M32 1          /* AT&T WE 32100 */
-#define EM_SPARC 2        /* SPARC */
-#define EM_386 3          /* Intel Architecture */
-#define EM_68K 4          /* Motorola 68000 */
-#define EM_88K 5          /* Motorola 88000 */
-#define EM_860 7          /* Intel 80860 */
-#define EM_MIPS 8         /* MIPS RS3000 Big-Endian */
-#define EM_MIPS_RS4_BE 10 /* MIPS RS4000 Big-Endian */
+#define EM_NONE         0       /* No machine */
+#define EM_M32          1       /* AT&T WE 32100 */
+#define EM_SPARC        2       /* SPARC */
+#define EM_386          3       /* Intel Architecture */
+#define EM_68K          4       /* Motorola 68000 */
+#define EM_88K          5       /* Motorola 88000 */
+#define EM_860          7       /* Intel 80860 */
+#define EM_MIPS         8       /* MIPS RS3000 Big-Endian */
+#define EM_MIPS_RS4_BE  10      /* MIPS RS4000 Big-Endian */
 //      RESERVED        11-16   Reserved for future use
 //      RESERVED        17-39   Other Machine
-#define EM_ARM 40 /* ARM 32-bit architecture (AARCH32) */
+#define EM_ARM          40      /* ARM 32-bit architecture (AARCH32) */
 //      RESERVED        41-243  Other Machine
 
 /* e_version */
-#define EV_NONE 0    /* Invalid version */
-#define EV_CURRENT 1 /* Current version */
+#define EV_NONE     0   /* Invalid version */
+#define EV_CURRENT  1   /* Current version */
 
 #endif

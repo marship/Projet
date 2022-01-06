@@ -1,20 +1,30 @@
 JOUR 0/Avant les vacances :
 
-	Lors de la formation des groupes, nous étions 4 nous connaitre (Paul, Mathis, Adrien, Alban) et il a fallut trouver 2 autres membres afin de former un groupe de 6 personnes.
-	Thibault et Bruno se sont alors rajoutés. Nous avons donc fait connaissance et avons commencé à lire le sujet ensemble afin de comprendre ce qui serait demandé de nous.
-	Peu concluant, car nous étions déja en vacances...
+	Lors de la formation des groupes, nous étions quatre à nous connaitre (Paul, Mathis, Adrien, Alban) et nous nous sommes liés au binôme que forme Thibault et Bruno afin de créer un groupe de six personnes.
+    Nous avons fait connaissance les-uns avec les autres puis nous avons commencé à lire le sujet pour pouvoir démarrer le projet.
+    C'est avec le sujet en tête que nous sommes partis en vacances.
 
 JOUR 1/Lundi
 
-	Après relecture du sujet, on remarque ques les 5 premières étapes peuvent etre réalisées en parallèle afin d'avancer plus rapidement.
-	On part alors de l'idée de réaliser la première étape tous ensemble, pour se mettre dans le bain, et se répartir prochainement les étapes suivantes en binomes.
-	On a eu quelques difficultés pour lire le fichier ELF, mais une fois ce problème réglé nous avons pu avancer assez tranquillement. A la fin de la journée, et ce en dépit de l'énoncé, nous avions réalisé une fonction qui déchiffre les fichiers ELF en 64 bits et Big Endian seulement.
-	Avant de passer a l'étape 2, il sera donc nécessaire de compléter cette fonction.
+	Après relecture du sujet au retour des vacances, on remarque que les cinq premières étapes peuvent être réalisées en parallèle pour gagner en efficacité.
+    On décide alors de réaliser la première étape tous ensemble pour se mettre dans le bain puis une fois cette dernière terminée nous nous sommes réparti les étapes suivantes en binômes.
+    On a eu quelques difficultés pour lire le fichier ELF, mais une fois ce problème réglé nous avons pu avancer assez tranquillement. À la fin de la journée, nous avons réalisé une fonction qui déchiffre les fichiers ELF en 64 bits et en Big Endian malheureusement ce n'était pas ce qu'il fallait faire.
+    Avant de passer à l'étape 2, nous devrons donc refaire cette fonction afin quelle respecte les consignes du sujet.
 
 JOUR2/Mardi
 
-	On se met comme but de finir l'étape 1 d'ici la fin de la journée. Notre gros soucis a été de transposer les données lues en Big Endian en Little Endian. En effet, le sens de lecture étant différent, ce sont pas du tout les mêmes choses qui sont lues avec des méthodes.
-	Nous avons également réglé le problème de la lecture en  bits afin de passer en 
-	bits. Après h passées à chercher du Big Endian au Little Endian, nous sommes parvenus à obtenir une étape  parfaitement fonctionnelle.
-	En se penchant sur l'étape 2, on voit qu'il est nécessaire de lire des données à partir d'une adresse donnée. 
-	On récupère facilement l'adresse grace a la fonction de l'étape 1, mais le problème est de lire à partir d'une certaine adresse, ici celle de la table des sections
+	Nous avons pour but de finir l'étape une d'ici la fin de la journée. Notre gros problème a été de transposer les données lues de Big Endian en Little Endian.
+    En effet, le sens de lecture étant différent, nous n'obtenions pas les résultats attendus.
+    Après quelques heures passées à chercher une méthode pour passer du Big Endian au Little Endian, nous sommes parvenus à obtenir une méthode fonctionnelle.
+    En se penchant sur l'étape deux, on voit qu'il est nécessaire de lire des données à partir d'une certaine adresse.
+    On récupère facilement cette adresse grâce à une fonction réalisée à l'étape une, mais le problème est d'arriver à lire un fichier binaire à partir d'une certaine adresse, ici l'adresse correspondant à la table des sections
+
+JOUR3/Mercredi
+
+	On décide de se répartir autrement le travail à réaliser de façon à avancer de manière homogène.
+    Un trinôme fait la partie quatre, un binôme se consacre à la partie deux et trois et une personne se penche sur la partie 5.
+    Une bonne partie du travail consiste à étudier la forme des données à récupérer, afin de savoir comment les organiser et comment les lires.
+    Cela nous aura pris une bonne partie de la matinée.
+    Petit problème en fin de matinée, Internet n'était plus disponible dans les bâtiments de la fac à partir de 11 h sur les ordinateurs de l'IM2AG.
+    Nous sommes revenus à 12 h 10, et Internet n'est toujours pas revenu, nous avons donc décidé de continuer chez nous.
+    À la fin de la journée, les parties quatre et cinq ont bien avancé et seront bientôt terminées.

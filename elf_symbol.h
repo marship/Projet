@@ -13,7 +13,6 @@
     3:  Répéter pour le nombre de symbole -> lecture, ...
 */
 
-    
 
 /* ELF32 Structure de la table des symboles en 32-bit (Couleur cf Schéma) */
 typedef struct {
@@ -50,9 +49,9 @@ typedef struct {
 #define STT_HIPROC  15
 
 /* Symbol Visibility */
-#define STV_DEFAULT 0
-#define STV_INTERNAL 1
-#define STV_HIDDEN 2
-#define STV_PROTECTED 3
+#define STV_DEFAULT     0
+#define STV_INTERNAL    1
+#define STV_HIDDEN      2
+#define STV_PROTECTED   3
 
 #endif
