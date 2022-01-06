@@ -13,6 +13,14 @@
  * TO DO Description
  * 
  */
-void *lire_symbole(char *nom_fichier, Elf32_Ehdr ehdr, Elf32_Shdr *shdr);
+Elf32_Sym *lire_symbole(char *nom_fichier, Elf32_Ehdr ehdr, Elf32_Shdr *shdr);
+
+/**
+ * @brief 
+ * 
+ * TO DO Description
+ * 
+ */
+void afficher_symboles(Elf32_Sym *sym, Elf32_Ehdr ehdr, Elf32_Shdr *shdr);
 
 #endif
