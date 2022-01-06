@@ -114,11 +114,7 @@ void afficher_relocations(Relocations *reloc, Elf32_Ehdr ehdr, Elf32_Shdr *shdr,
 
                     int l = sym[k].st_shndx;
                     afficher_chaine(shstrtab, shdr[l].sh_name);
-
-                    // TOTO: Ajouter affichage de r_addend
-
-                    printf("\n");
-
+                    printf(" + %x\n", reloc[i].rela[j].r_addend);
                 }
             }
         }
