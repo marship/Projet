@@ -4,13 +4,7 @@
 #include "lecture_section.h"
 #include "fonctions_utilitaires.h"
 
-// Numéro de Section
-int noSection;
-
-// Nombre de Symbole
-int nbSym;
-
-Elf32_Shdr *lire_symbole(char *nom_fichier, Elf32_Ehdr ehdr)
+Elf32_Shdr *lire_section(char *nom_fichier, Elf32_Ehdr ehdr)
 {
     FILE *f;
 
@@ -57,12 +51,12 @@ Elf32_Shdr *lire_symbole(char *nom_fichier, Elf32_Ehdr ehdr)
 }
 
 void afficher_section(Elf32_Shdr *shdr, Elf32_Ehdr ehdr){
-    printf("Il y a %d en-tete de sections, qui commencent a offset 0x%d\n", ehdr.e_shnum, ehdr.e_shoff);
+    printf("Il y a %d en-tete de sections, qui commencent a offset 0x%x\n", ehdr.e_shnum, ehdr.e_shoff);
     printf("Section Headers :\n");
-    printf("[Nb] Name\tType\tAddr\tOff\tSize\tES FLG LK INF AL\n");
+    printf("[Nb] Name\tType\t\tAddr\tOff\tSize\tES FLG LK INF AL\n");
     for (int i = 0; i < ehdr.e_shnum; i++){
         printf("[%d] ", i);
-        // Name
+        printf("Name\t");
         switch (shdr[i].sh_type)
         {
         case SHT_NULL:
@@ -129,10 +123,10 @@ void afficher_section(Elf32_Shdr *shdr, Elf32_Ehdr ehdr){
             printf("Inconnu\t");
             break;
         }
-        printf("%8x", shdr[i].sh_addr);
-        printf("%6x", shdr[i].sh_offset);
-        printf("%6x", shdr[i].sh_size);
-        printf("%2x", shdr[i].sh_entsize);
+        printf("%.8x ", shdr[i].sh_addr);
+        printf("%.6x ", shdr[i].sh_offset);
+        printf("%.6x ", shdr[i].sh_size);
+        printf("%.2x ", shdr[i].sh_entsize);
 
         switch (shdr[i].sh_flags)
         {
@@ -153,13 +147,13 @@ void afficher_section(Elf32_Shdr *shdr, Elf32_Ehdr ehdr){
             break;
         
         default:
-            printf("i ");
+            printf(" ");
             break;
         }
 
-        printf("%x", shdr[i].sh_link);
-        printf("%x", shdr[i].sh_info);
-        printf("%x", shdr[i].sh_addralign);
+        printf("%x ", shdr[i].sh_link);
+        printf("%d ", shdr[i].sh_info);
+        printf("%x\n", shdr[i].sh_addralign);
     }
     
 }
