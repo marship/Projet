@@ -102,7 +102,7 @@ void afficher_relocations(Relocations *reloc, Elf32_Ehdr ehdr, Elf32_Shdr *shdr,
                 }
             }
             else {
-                print(" Offset     Info    Type            Sym.Value  Sym. Name + Addend\n");
+                printf(" Offset     Info    Type            Sym.Value  Sym. Name + Addend\n");
 
                 for (int j = 0; j < entries; j++) {
                     printf("%08x  ", reloc[i].rela[j].r_offset);
