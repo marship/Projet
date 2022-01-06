@@ -15,11 +15,13 @@ Elf32_Sym *lire_symbole(char *nom_fichier, Elf32_Ehdr ehdr, Elf32_Shdr *shdr)
     FILE *f;
 
     // Recherche de la section des symboles
-    noSection = 0;
+    noSection = 8;
+    /*
     while (shdr[noSection].sh_name != ".symtab")
     {
         noSection++;
     }
+    */
 
     // Calcul du nombre de symboles
     nbSym = shdr[noSection].sh_size / shdr[noSection].sh_entsize;
@@ -72,7 +74,7 @@ void afficher_symboles(Elf32_Sym *sym, char *nom_fichier)
     for (int i = 0; i < nbSym; i++)
     {
         printf("[%d]\t", i);             // Affichage du numéro du symbole
-        printf("%x\t", sym[i].st_value); // Affichage de la valeur
+        printf("%.8x\t", sym[i].st_value); // Affichage de la valeur
         printf("%x\t", sym[i].st_size);  // Affichage de la taille
 
         switch (ELF32_ST_TYPE(sym[i].st_info)) // Affichage du type
@@ -168,8 +170,9 @@ void afficher_symboles(Elf32_Sym *sym, char *nom_fichier)
             fprintf(stderr, "Erreur de lecture du fichier %s\n", nom_fichier);
             exit(EXIT_FAILURE);
         }
-
+        printf("Nom");
         // Affichage du nom
+        /*
         char lettre;
         fread(&lettre, sizeof(char), 1, f);
         while (lettre != '\0')
@@ -177,6 +180,7 @@ void afficher_symboles(Elf32_Sym *sym, char *nom_fichier)
             printf("%c", lettre);
             fread(&lettre, sizeof(char), 1, f);
         }
+        */
         printf("\n");
     }
 }
