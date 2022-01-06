@@ -28,3 +28,9 @@ JOUR3/Mercredi
     Petit problème en fin de matinée, Internet n'était plus disponible dans les bâtiments de la fac à partir de 11 h sur les ordinateurs de l'IM2AG.
     Nous sommes revenus à 12 h 10, et Internet n'est toujours pas revenu, nous avons donc décidé de continuer chez nous.
     À la fin de la journée, les parties quatre et cinq ont bien avancé et seront bientôt terminées.
+
+JOUR4/Jeudi
+	
+	L'audit d'oral s'est bien passé, nous sommes relativement dans les temps et notre code à l'air correct, même s'il est perfectible.
+    Nous avons donc continué de travailler en groupe afin d'avancer de façon équilibrée. A la fin de la journée, les parties 2, 4 et 5 sont presques complètes puisqu'il ne 	     leur manque que de la finition. 
+    Avec comme objectif de faire une grosse partie de l'étape 3 demain afin de pouvoir finir de manière propre la Phase 1 pendant le week-end.
