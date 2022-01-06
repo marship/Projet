@@ -92,8 +92,10 @@ void afficher_relocations(Relocations *reloc, Elf32_Ehdr ehdr, Elf32_Shdr *shdr,
                     printf("%08x  ", reloc[i].rel[j].r_offset);
                     printf("%08x ", reloc[i].rel[j].r_info);
                     afficher_type_relocation(ELF32_R_TYPE(reloc[i].rel[j].r_info));
+
                     int k = ELF32_R_SYM(reloc[i].rel[j].r_info);
                     printf("%08x   ", sym[k].st_value);
+
                     int l = sym[k].st_shndx;
                     afficher_chaine(shstrtab, shdr[l].sh_name);
                     printf("\n");
@@ -102,6 +104,22 @@ void afficher_relocations(Relocations *reloc, Elf32_Ehdr ehdr, Elf32_Shdr *shdr,
             else {
                 print(" Offset     Info    Type            Sym.Value  Sym. Name + Addend\n");
 
+                for (int j = 0; j < entries; j++) {
+                    printf("%08x  ", reloc[i].rela[j].r_offset);
+                    printf("%08x ", reloc[i].rela[j].r_info);
+                    afficher_type_relocation(ELF32_R_TYPE(reloc[i].rela[j].r_info));
+
+                    int k = ELF32_R_SYM(reloc[i].rela[j].r_info);
+                    printf("%08x   ", sym[k].st_value);
+
+                    int l = sym[k].st_shndx;
+                    afficher_chaine(shstrtab, shdr[l].sh_name);
+
+                    // TOTO: Ajouter affichage de r_addend
+
+                    printf("\n");
+
+                }
             }
         }
     }
