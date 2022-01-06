@@ -84,9 +84,10 @@ void afficher_relocations(Relocations *reloc, Elf32_Ehdr ehdr, Elf32_Shdr *shdr,
             printf("Relocation section '");
             afficher_chaine(shstrtab, shdr[i].sh_name);
             printf("' at offset 0x%x contains %d entry:\n", shdr[i].sh_offset, entries);
-            printf(" Offset     Info    Type            Sym.Value  Sym. Name\n");
 
             if (shdr[i].sh_type == SHT_REL) {
+                printf(" Offset     Info    Type            Sym.Value  Sym. Name\n");
+
                 for (int j = 0; j < entries; j++) {
                     printf("%08x  ", reloc[i].rel[j].r_offset);
                     printf("%08x ", reloc[i].rel[j].r_info);
@@ -97,6 +98,10 @@ void afficher_relocations(Relocations *reloc, Elf32_Ehdr ehdr, Elf32_Shdr *shdr,
                     afficher_chaine(shstrtab, shdr[l].sh_name);
                     printf("\n");
                 }
+            }
+            else {
+                print(" Offset     Info    Type            Sym.Value  Sym. Name + Addend\n");
+
             }
         }
     }
