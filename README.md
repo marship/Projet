@@ -13,7 +13,8 @@ Lancement du projet de Prog5
 
 ### Bilan Réunion de Mi-Projet
 
-...
+    - Factoriser les fonctions d'ouverture de fichier pour eviter les répétitions
+    - Automatiser Les Tests (Très utile pour la suite)
 
 ### Historique
 
