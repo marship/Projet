@@ -43,15 +43,8 @@ Elf32_Sym *lire_symbole(char *nom_fichier, Elf32_Ehdr ehdr, Elf32_Shdr *shdr)
         exit(EXIT_FAILURE);
     }
 
-    sym[0].st_name = "";
-    sym[0].st_value = 0;
-    sym[0].st_size = 0;
-    sym[0].st_info = 0;
-    sym[0].st_other = 0;
-    sym[0].st_shndx = 0;
-
     // Lecture des valeurs souhaitées
-    for (int i = 1; i < nbSym; i++)
+    for (int i = 0; i < nbSym; i++)
     {
         if (read_uint32(&sym[i].st_name, f, ehdr.e_ident[EI_DATA]) == 0 || read_uint32(&sym[i].st_value, f, ehdr.e_ident[EI_DATA]) == 0 || read_uint32(&sym[i].st_size, f, ehdr.e_ident[EI_DATA]) == 0 || fread(&sym[i].st_info, sizeof(char), 1, f) == 0 || fread(&sym[i].st_other, sizeof(char), 1, f) == 0 || read_uint16(&sym[i].st_shndx, f, ehdr.e_ident[EI_DATA]) == 0)
         {
@@ -76,8 +69,7 @@ void afficher_symboles(Elf32_Sym *sym, char *nom_fichier)
     }
 
     printf("[Nr]\tValeur\tTaille\tType\tLien\tVisibilite\tNDX\tNom\n");
-    // Affichier le 0
-    for (int i = 1; i < nbSym; i++)
+    for (int i = 0; i < nbSym; i++)
     {
         printf("[%d]\t", i);             // Affichage du numéro du symbole
         printf("%x\t", sym[i].st_value); // Affichage de la valeur
