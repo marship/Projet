@@ -30,6 +30,7 @@ int main(int argc, char **argv)
 
 	int opt;
 	char *nom_fichier = NULL;
+	Elf32_Ehdr ehdr;
 	Elf32_Shdr *shdr;
 
     if (argc < 2)
@@ -47,12 +48,12 @@ int main(int argc, char **argv)
 		{ NULL, 0, NULL, 0 }
 	};
 
-	Elf32_Ehdr ehdr = lire_entete(nom_fichier);
 
 	while ((opt = getopt_long(argc, argv, "h:S:s:r:H", longopts, NULL)) != -1) {
 		switch(opt) {
 		case 'h':
 			nom_fichier = optarg;
+			ehdr = lire_entete(nom_fichier);
 			afficher_entete(ehdr);
 			break;
 
