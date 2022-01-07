@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-Wall -Werror -Wextra
+CFLAGS=-g -Wall -Werror -Wextra
 
 SRC=$(wildcard *.c)
 OBJ=$(patsubst %.c, %.o, $(SRC))
