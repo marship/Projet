@@ -54,5 +54,6 @@ char *lire_shstrtab(Elf32_Shdr *shdr, Elf32_Ehdr ehdr, char *nom_fichier) {
 void afficher_chaine(char *strtab, Elf32_Word index) {
     while (strtab[index] != '\0') {
         printf("%c", strtab[index]);
+        index++;
     }
 }

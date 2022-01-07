@@ -15,13 +15,18 @@ Elf32_Sym *lire_symbole(char *nom_fichier, Elf32_Ehdr ehdr, Elf32_Shdr *shdr)
     FILE *f;
 
     // Recherche de la section des symboles
-    noSection = 8;
-    /*
-    while (shdr[noSection].sh_name != ".symtab")
+    noSection = 0;
+
+    while (shdr[noSection].sh_type != SHT_SYMTAB && noSection < ehdr.e_shnum)
     {
         noSection++;
     }
-    */
+
+    if (noSection == ehdr.e_shnum)
+    {
+        fprintf(stderr, "Erreur: symbol table absente\n");
+        exit(EXIT_FAILURE);
+    }
 
     // Calcul du nombre de symboles
     nbSym = shdr[noSection].sh_size / shdr[noSection].sh_entsize;

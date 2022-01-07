@@ -34,9 +34,9 @@ int main(int argc, char **argv)
 	Elf32_Ehdr ehdr;
 	Elf32_Shdr *shdr;
     // char *strtab = NULL;
-    // char *shstrtab = NULL;
-    // Elf32_Sym *sym;
-    // Relocations *reloc;
+    char *shstrtab = NULL;
+    Elf32_Sym *sym;
+    Relocations *reloc;
 
     if (argc < 2)
     {
@@ -59,9 +59,9 @@ int main(int argc, char **argv)
 		ehdr = lire_entete(nom_fichier);
 		shdr = lire_section(nom_fichier, ehdr);
         // strtab = lire_strtab(shdr, ehdr, nom_fichier);
-        // shstrtab = lire_shstrtab(shdr, ehdr, nom_fichier);
-        // sym = lire_symbole(nom_fichier, ehdr, shdr);
-        // reloc = lire_relocations(nom_fichier, ehdr, shdr);
+        shstrtab = lire_shstrtab(shdr, ehdr, nom_fichier);
+        sym = lire_symbole(nom_fichier, ehdr, shdr);
+        reloc = lire_relocations(nom_fichier, ehdr, shdr);
 
         switch(opt) {
 		case 'h':
@@ -72,10 +72,10 @@ int main(int argc, char **argv)
 			afficher_section(shdr, ehdr);
 			break;
         case 's':
-            // afficher_symboles(sym, nom_fichier);
+            afficher_symboles(sym, nom_fichier);
             break;
 		case 'r':
-            // afficher_relocations(reloc, ehdr, shdr, shstrtab, sym);
+            afficher_relocations(reloc, ehdr, shdr, shstrtab, sym);
 			break;
 		case 'H':
 			usage(argv[0]);

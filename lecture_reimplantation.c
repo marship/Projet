@@ -27,7 +27,7 @@ Relocations *lire_relocations(char *nom_fichier, Elf32_Ehdr ehdr, Elf32_Shdr *sh
                 exit(EXIT_FAILURE);
             }
 
-            int entries = shdr[i].sh_size / 8;
+            int entries = shdr[i].sh_size / shdr[i].sh_entsize;
 
             if (shdr[i].sh_type == SHT_REL) {
                 reloc[i].rel = malloc(entries * sizeof(Elf32_Rel));
@@ -79,11 +79,18 @@ void liberer_relocations(Relocations *reloc, Elf32_Ehdr ehdr) {
 void afficher_relocations(Relocations *reloc, Elf32_Ehdr ehdr, Elf32_Shdr *shdr, char *shstrtab, Elf32_Sym *sym) {
     for (int i = 0; i < ehdr.e_shnum; i++) {
         if (shdr[i].sh_type == SHT_REL || shdr[i].sh_type == SHT_RELA) {
-            int entries = shdr[i].sh_size / 8;
+            int entries = shdr[i].sh_size / shdr[i].sh_entsize;
 
-            printf("Relocation section '");
+            printf("\nRelocation section '");
             afficher_chaine(shstrtab, shdr[i].sh_name);
-            printf("' at offset 0x%x contains %d entry:\n", shdr[i].sh_offset, entries);
+            printf("' at offset 0x%x contains %d ", shdr[i].sh_offset, entries);
+
+            if (entries == 1) {
+                printf("entry:\n");
+            }
+            else {
+                printf("entries:\n");
+            }
 
             if (shdr[i].sh_type == SHT_REL) {
                 printf(" Offset     Info    Type            Sym.Value  Sym. Name\n");
