@@ -37,13 +37,18 @@ char *lire_strtab(Elf32_Shdr *shdr, Elf32_Ehdr ehdr, char *nom_fichier) {
             return lire_string_table(shdr[i].sh_addr + shdr[i].sh_offset, shdr[i].sh_size, nom_fichier);
         }
     }
-    fprintf(stderr, "Erreur: string table absente\n");
+    fprintf(stderr, "Erreur: symbol string table absente\n");
     exit(EXIT_FAILURE);
 }
 
 char *lire_shstrtab(Elf32_Shdr *shdr, Elf32_Ehdr ehdr, char *nom_fichier) {
     int i = ehdr.e_shstrndx;
-    return lire_string_table(shdr[i].sh_addr + shdr[i].sh_offset, shdr[i].sh_size, nom_fichier);
+
+    if (shdr[i].sh_type == SHT_STRTAB) {
+        return lire_string_table(shdr[i].sh_addr + shdr[i].sh_offset, shdr[i].sh_size, nom_fichier);
+    }
+    fprintf(stderr, "Erreur: section header string table absente\n");
+    exit(EXIT_FAILURE);
 }
 
 void afficher_chaine(char *strtab, Elf32_Word index) {
