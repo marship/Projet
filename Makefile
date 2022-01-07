@@ -15,3 +15,5 @@ clean:
 
 distclean: clean
 	rm -f $(BIN)
+
+re: distclean all
