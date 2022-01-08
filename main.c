@@ -3,6 +3,8 @@
 #include <stdint.h>
 #include <getopt.h>
 #include "elf_header.h"
+#include "section_header.h"
+#include "string_table.h"
 
 
 void usage(char *name)
@@ -25,9 +27,9 @@ int main(int argc, char **argv)
     int opt;
     char *nom_fichier = NULL;
     Elf32_Ehdr ehdr;
-    // Elf32_Shdr *shdr;
+    Elf32_Shdr *shdr;
     // char *strtab = NULL;
-    // char *shstrtab = NULL;
+    char *shstrtab = NULL;
     // Elf32_Sym *sym;
     // Relocations *reloc;
 
@@ -60,9 +62,9 @@ int main(int argc, char **argv)
             }
 
             ehdr = lire_elf_header(f, nom_fichier);
-            // shdr = lire_section(nom_fichier, ehdr);
+            shdr = lire_section_header(f, ehdr);
             // strtab = lire_strtab(shdr, ehdr, nom_fichier);
-            // shstrtab = lire_shstrtab(shdr, ehdr, nom_fichier);
+            shstrtab = lire_shstrtab(f, shdr, ehdr);
             // sym = lire_symbole(nom_fichier, ehdr, shdr);
             // reloc = lire_relocations(nom_fichier, ehdr, shdr);
 
@@ -73,9 +75,8 @@ int main(int argc, char **argv)
         case 'h':
             afficher_elf_header(ehdr);
             break;
-
         case 'S':
-            // afficher_section(shdr, ehdr);
+            afficher_section_header(shdr, ehdr, shstrtab);
             break;
         case 's':
             // afficher_symboles(sym, nom_fichier);

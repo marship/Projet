@@ -1,64 +1,62 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
-#include "lecture_section.h"
-#include "fonctions_utilitaires.h"
+#include "section_header.h"
 #include "string_table.h"
+#include "fonctions_utilitaires.h"
 
-Elf32_Shdr *lire_section(char *nom_fichier, Elf32_Ehdr ehdr)
+
+Elf32_Shdr *lire_section_header(FILE *f, Elf32_Ehdr ehdr)
 {
-    FILE *f;
-
     // Allocation de la place nécessaire
     Elf32_Shdr *shdr = malloc(ehdr.e_shnum * sizeof(Elf32_Shdr));
 
-    // Ouverture du fichier
-    f = fopen(nom_fichier, "rb");
-
-    if (f == NULL)
-    {
-        fprintf(stderr, "Impossible d'ouvir le fichier : %s\n", nom_fichier);
-        exit(EXIT_FAILURE);
-    }
-
-    // Deplacement au début des symboles
+    // Déplacement au début des en-têtes de section
     if (fseek(f, ehdr.e_shoff, SEEK_SET) != 0)
     {
-        fprintf(stderr, "Erreur de lecture du fichier %s\n", nom_fichier);
+        fprintf(stderr,
+                "ERREUR: La lecture de %d octets va au delà de la fin du fichier pour En-têtes de section\n",
+                ehdr.e_shnum * ehdr.e_shentsize);
         exit(EXIT_FAILURE);
     }
 
     // Lecture des valeurs souhaitées
     for (int i = 0; i < ehdr.e_shnum; i++)
     {
-        if (read_uint32(&shdr[i].sh_name, f, ehdr.e_ident[EI_DATA]) == 0 
-        || read_uint32(&shdr[i].sh_type, f, ehdr.e_ident[EI_DATA]) == 0 
-        || read_uint32(&shdr[i].sh_flags, f, ehdr.e_ident[EI_DATA]) == 0 
-        || read_uint32(&shdr[i].sh_addr, f, ehdr.e_ident[EI_DATA]) == 0 
-        || read_uint32(&shdr[i].sh_offset, f, ehdr.e_ident[EI_DATA]) == 0 
-        || read_uint32(&shdr[i].sh_size, f, ehdr.e_ident[EI_DATA]) == 0 
-        || read_uint32(&shdr[i].sh_link, f, ehdr.e_ident[EI_DATA]) == 0 
-        || read_uint32(&shdr[i].sh_info, f, ehdr.e_ident[EI_DATA]) == 0 
-        || read_uint32(&shdr[i].sh_addralign, f, ehdr.e_ident[EI_DATA]) == 0 
-        || read_uint32(&shdr[i].sh_entsize, f, ehdr.e_ident[EI_DATA]) == 0)
+        if (read_uint32(&shdr[i].sh_name, f, ehdr.e_ident[EI_DATA]) == 0 ||
+            read_uint32(&shdr[i].sh_type, f, ehdr.e_ident[EI_DATA]) == 0 ||
+            read_uint32(&shdr[i].sh_flags, f, ehdr.e_ident[EI_DATA]) == 0 ||
+            read_uint32(&shdr[i].sh_addr, f, ehdr.e_ident[EI_DATA]) == 0 ||
+            read_uint32(&shdr[i].sh_offset, f, ehdr.e_ident[EI_DATA]) == 0 ||
+            read_uint32(&shdr[i].sh_size, f, ehdr.e_ident[EI_DATA]) == 0 ||
+            read_uint32(&shdr[i].sh_link, f, ehdr.e_ident[EI_DATA]) == 0 ||
+            read_uint32(&shdr[i].sh_info, f, ehdr.e_ident[EI_DATA]) == 0 ||
+            read_uint32(&shdr[i].sh_addralign, f, ehdr.e_ident[EI_DATA]) == 0 ||
+            read_uint32(&shdr[i].sh_entsize, f, ehdr.e_ident[EI_DATA]) == 0)
         {
-            fprintf(stderr, "Erreur: %s: Echec de la lecteur du symbole %d\n", nom_fichier, i);
+            fprintf(stderr,
+                    "ERREUR: La lecture de %d octets va au delà de la fin du fichier pour En-têtes de section\n",
+                    ehdr.e_shnum * ehdr.e_shentsize);
             exit(EXIT_FAILURE);
         }
     }
 
-    fclose(f);
     return shdr;
 }
 
-void afficher_section(Elf32_Shdr *shdr, Elf32_Ehdr ehdr, char *shstrtab){
+
+void afficher_section_header(Elf32_Shdr *shdr, Elf32_Ehdr ehdr, char *shstrtab)
+{
     printf("Il y a %d en-tete de sections, qui commencent a offset 0x%x\n", ehdr.e_shnum, ehdr.e_shoff);
     printf("Section Headers :\n");
     printf("[Nb] Name\tType\t\tAddr\tOff\tSize\tES FLG LK INF AL\n");
-    for (int i = 0; i < ehdr.e_shnum; i++){
+
+    for (int i = 0; i < ehdr.e_shnum; i++)
+    {
         printf("[%d] ", i);
         afficher_chaine(shstrtab, shdr[i].sh_name);
         printf("\t");
+
         switch (shdr[i].sh_type)
         {
         case SHT_NULL:
@@ -157,5 +155,4 @@ void afficher_section(Elf32_Shdr *shdr, Elf32_Ehdr ehdr, char *shstrtab){
         printf("%d ", shdr[i].sh_info);
         printf("%x\n", shdr[i].sh_addralign);
     }
-    
 }

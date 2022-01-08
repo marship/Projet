@@ -2,6 +2,8 @@
 #define __SECTION_HEADER_H__
 
 #include "elf_types.h"
+#include "elf_header.h"
+
 
 typedef struct
 {
@@ -49,5 +51,26 @@ typedef struct
 #define SHN_ABS 0xfff1       /* This value specifies absolute values for the corresponding reference. */
 #define SHN_COMMON 0xfff2    /* Symbols defined relative to this section are common symbols. */
 #define SHN_HIRESERVE 0xffff /* This value specifies the upper bound of the range of reserved indexes. */
+
+
+/**
+ * @brief Fonction qui renvoie une structure Elf32_Shdr correspondant aux entêtes de sections du fichier ELF passé en paramètre
+ *
+ * @param f (FILE *) Fichier ELF ouvert
+ * @param ehdr (Elf32_Ehdr *) Structure contenant l'entête ELF
+ * @param nom_fichier (char *) Nom du fichier ELF
+ * @return (Elf32_Shdr *) Renvoie un tableau de Elf32_Shdr correspondant aux entêtes des sections
+ */
+Elf32_Shdr *lire_section_header(FILE *f, Elf32_Ehdr ehdr);
+
+/**
+ * @brief Fonction qui affiche les entêtes des sections d'un fichier ELF
+ *
+ * @param shdr (Elf32_Shdr *) Tableau contenant les entêtes des sections
+ * @param ehdr (Elf32_Ehdr) Structure contant l'entête du fichier ELF
+ * @param shstrtab (char *) Tableau correspondant aux chaines de caractères des entêtes de sections
+ */
+void afficher_section_header(Elf32_Shdr *shdr, Elf32_Ehdr ehdr, char *shstrtab);
+
 
 #endif
