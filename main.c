@@ -33,7 +33,7 @@ int main(int argc, char **argv)
 	char *nom_fichier = NULL;
 	Elf32_Ehdr ehdr;
 	Elf32_Shdr *shdr;
-    // char *strtab = NULL;
+    char *strtab = NULL;
     char *shstrtab = NULL;
     Elf32_Sym *sym;
     Relocations *reloc;
@@ -58,7 +58,7 @@ int main(int argc, char **argv)
 		nom_fichier = optarg;
 		ehdr = lire_entete(nom_fichier);
 		shdr = lire_section(nom_fichier, ehdr);
-        // strtab = lire_strtab(shdr, ehdr, nom_fichier);
+        strtab = lire_strtab(shdr, ehdr, nom_fichier);
         shstrtab = lire_shstrtab(shdr, ehdr, nom_fichier);
         sym = lire_symbole(nom_fichier, ehdr, shdr);
         reloc = lire_relocations(nom_fichier, ehdr, shdr);
@@ -67,12 +67,11 @@ int main(int argc, char **argv)
 		case 'h':
 			afficher_entete(ehdr);
 			break;
-
 		case 'S':
-			afficher_section(shdr, ehdr);
+			afficher_section(shdr, ehdr, shstrtab);
 			break;
         case 's':
-            afficher_symboles(sym, nom_fichier);
+            afficher_symboles(sym, nom_fichier, strtab);
             break;
 		case 'r':
             afficher_relocations(reloc, ehdr, shdr, shstrtab, sym);
