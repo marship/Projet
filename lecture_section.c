@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include "lecture_section.h"
 #include "fonctions_utilitaires.h"
+#include "string_table.h"
 
 Elf32_Shdr *lire_section(char *nom_fichier, Elf32_Ehdr ehdr)
 {
@@ -50,13 +51,14 @@ Elf32_Shdr *lire_section(char *nom_fichier, Elf32_Ehdr ehdr)
     return shdr;
 }
 
-void afficher_section(Elf32_Shdr *shdr, Elf32_Ehdr ehdr){
+void afficher_section(Elf32_Shdr *shdr, Elf32_Ehdr ehdr, char *shstrtab){
     printf("Il y a %d en-tete de sections, qui commencent a offset 0x%x\n", ehdr.e_shnum, ehdr.e_shoff);
     printf("Section Headers :\n");
     printf("[Nb] Name\tType\t\tAddr\tOff\tSize\tES FLG LK INF AL\n");
     for (int i = 0; i < ehdr.e_shnum; i++){
         printf("[%d] ", i);
-        printf("Name\t");
+        afficher_chaine(shstrtab, shdr[i].sh_name);
+        printf("\t");
         switch (shdr[i].sh_type)
         {
         case SHT_NULL:
