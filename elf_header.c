@@ -215,10 +215,10 @@ void afficher_elf_header(Elf32_Ehdr ehdr)
         // EABI        
         int abi = (ehdr.e_flags & EF_ARM_ABIMASK) >> 24;
 
-        if (abi > 5) {
+        if (abi >= 1 && abi <= 5) {
             printf(", Version%d EABI", abi);
         }
-        else if (abi > 0) {
+        else if (abi > 5) {
             printf(", <unrecognized EABI>");
         }
 
