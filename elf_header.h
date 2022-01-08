@@ -4,7 +4,7 @@
 #include "elf_types.h"
 
 // Redéfinie plus bas
-#define EI_NIDENT 16
+#define EI_NIDENT 16 /* Size of e_ident[] */                 // Contient la taille du tableau e_ident[]
 
 /* ELF32 Structure de l'entête en 32-bit */
 typedef struct
@@ -41,7 +41,6 @@ typedef struct
 
 #define EI_PAD 7 /* Start of padding bytes */                // Début des octets inutilisés dans e_ident (Ces octets sont réservés et mis à zéro, Les programmes qui lisent les fichiers d'objets doivent les ignorer)
                                                              // Cet valeur changera dans le futur si l'on donne une signification aux octets actuellement inutilisés
-#define EI_NIDENT 16 /* Size of e_ident[] */                 // Contient la taille du tableau e_ident[]
 
 /* EI_MAG0 à EI_MAG3 */
 #define ELFMAG0 0x7f     /* e_ident[EI_MAG0] */
@@ -88,5 +87,21 @@ typedef struct
 /* e_version */
 #define EV_NONE     0   /* Invalid version */
 #define EV_CURRENT  1   /* Current version */
+
+/* ARM-specific e_flags */
+#define EF_ARM_REL_EXEC       0x00000001
+#define EF_ARM_POS_IND        0x00000020
+#define EF_ARM_ABIMASK        0xFF000000
+#define EF_ARM_ABI_FLOAT_SOFT 0x00000200
+#define EF_ARM_ABI_FLOAT_HARD 0x00000400
+#define EF_ARM_LE8            0x00400000
+#define EF_ARM_BE8            0x00800000
+#define EF_ARM_UNKNOWN        0x003FF9de
+
+
+Elf32_Ehdr lire_elf_header(FILE *f, char *nom_fichier);
+
+void afficher_elf_header(Elf32_Ehdr ehdr);
+
 
 #endif
