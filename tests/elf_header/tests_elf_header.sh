@@ -4,12 +4,11 @@
 PROJET="$(realpath $0)"
 PROJET="${PROJET%/*/*/*}"
 
-# Variables pour formater le texte
+# Variables pour colorer le texte
 BLACK='\033[0;30m'
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 CYAN='\033[0;36m'
-ITALIC='\033[0;3m'
 RESET='\033[0m'
 
 usage() {
