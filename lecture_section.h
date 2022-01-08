@@ -20,6 +20,6 @@ Elf32_Shdr *lire_section(char *nom_fichier, Elf32_Ehdr ehdr);
  *
  * @param sym (Elf32_Sym *) Structure contenant les sections
  */
-void afficher_section(Elf32_Shdr *shdr, Elf32_Ehdr ehdr);
+void afficher_section(Elf32_Shdr *shdr, Elf32_Ehdr ehdr, char *shstrtab);
 
 #endif
