@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include "lecture_symbole.h"
 #include "fonctions_utilitaires.h"
+#include "string_table.h"
 
 // Numéro de Section
 int noSection;
@@ -63,7 +64,7 @@ Elf32_Sym *lire_symbole(char *nom_fichier, Elf32_Ehdr ehdr, Elf32_Shdr *shdr)
     return sym;
 }
 
-void afficher_symboles(Elf32_Sym *sym, char *nom_fichier)
+void afficher_symboles(Elf32_Sym *sym, char *nom_fichier, char *shstrtab)
 {
 
     FILE *f;
@@ -175,17 +176,7 @@ void afficher_symboles(Elf32_Sym *sym, char *nom_fichier)
             fprintf(stderr, "Erreur de lecture du fichier %s\n", nom_fichier);
             exit(EXIT_FAILURE);
         }
-        printf("Nom");
-        // Affichage du nom
-        /*
-        char lettre;
-        fread(&lettre, sizeof(char), 1, f);
-        while (lettre != '\0')
-        {
-            printf("%c", lettre);
-            fread(&lettre, sizeof(char), 1, f);
-        }
-        */
+        afficher_chaine(shstrtab, sym[i].st_name);
         printf("\n");
     }
 }
