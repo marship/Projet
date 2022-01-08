@@ -104,7 +104,7 @@ void afficher_elf_header(Elf32_Ehdr ehdr)
     switch (ehdr.e_ident[EI_VERSION])
     {
     case EV_NONE:
-        printf("0\n");
+        printf("0 \n");
         break;
     case EV_CURRENT:
         printf("1 (current)\n");
@@ -265,5 +265,9 @@ void afficher_elf_header(Elf32_Ehdr ehdr)
     printf("  Number of section headers:         %u\n", ehdr.e_shnum);
 
     // Section header string table index
-    printf("  Section header string table index: %u\n", ehdr.e_shstrndx);
+    printf("  Section header string table index: %u", ehdr.e_shstrndx);
+    if (ehdr.e_shstrndx >=  ehdr.e_shnum && ehdr.e_shstrndx > 0) {
+        printf(" <corrupt: out of range>");
+    }
+    printf("\n");
 }

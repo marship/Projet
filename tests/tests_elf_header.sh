@@ -2,7 +2,7 @@
 
 # On récupère le chemin absolu de la racine du projet
 PROJET="$(realpath $0)"
-PROJET="${PROJET%/*/*/*}"
+PROJET="${PROJET%/*/*}"
 
 # Variables pour colorer le texte
 BLACK='\033[0;30m'
@@ -48,7 +48,7 @@ else
 fi
 
 
-TESTS="tests/elf_header/erreurs"
+TESTS="tests/erreurs"
 
 for file in ${PROJET}/${TESTS}/*
 do
@@ -56,7 +56,8 @@ do
     OBTENU=$(${PROJET}/main -h ${file} 2>&1)
 
     # On stocke l'affichage que l'on souhaite obtenir
-    ATTENDU=$(readelf -h ${file} 2>&1)
+    # ATTENDU=$(readelf -h ${file} 2>&1)
+    ATTENDU=$(grep '^readelf:\ ERREUR:\ ' <(readelf -h ${file} 2>&1))
     ATTENDU="${ATTENDU//readelf: /}"
 
     # On regarde si le test réussi ou non    
@@ -103,5 +104,61 @@ do
             printf "${RED}FAILED${RESET}\n"
         fi
     fi
+done
 
+
+TESTS="tests/corrects"
+
+for file in ${PROJET}/${TESTS}/*
+do
+    # On récupère l'affichage de notre programme
+    OBTENU=$(${PROJET}/main -h ${file} 2>&1)
+
+    # On stocke l'affichage que l'on souhaite obtenir
+    ATTENDU=$(arm-none-eabi-readelf -h ${file} 2>&1)
+
+    # On regarde si le test réussi ou non    
+    diff <(echo "${OBTENU}") <(echo "${ATTENDU}") &>/dev/null
+    DIFF=$?
+
+    # On affiche en fonction de l'option donnée en argument
+    if [ $AFFICHER -eq 2 ]
+    then
+        printf "${CYAN}${TESTS}/${file##*/} : ${RESET}"
+
+        # Si le test a réussi
+        if [ $DIFF -eq 0 ]
+        then
+            printf "${GREEN}PASSED${RESET}\n\n"
+            echo "${OBTENU}"
+
+        # Si le test a échoué
+        else
+            printf "${RED}FAILED${RESET}\n\n"
+            diff <(echo "${OBTENU}") <(echo "${ATTENDU}")
+        fi
+        printf "\n${BLACK}--------------------------------------------------${RESET}\n\n"
+
+    elif [ $AFFICHER -eq 1 ]
+    then
+        if [ $DIFF -eq 1 ]
+        then
+            printf "${CYAN}${TESTS}/${file##*/} : ${RESET}"
+
+            printf "${RED}FAILED${RESET}\n\n"
+            diff <(echo "${OBTENU}") <(echo "${ATTENDU}")
+            printf "\n${BLACK}--------------------------------------------------${RESET}\n\n"
+        fi
+
+    else
+        printf "${CYAN}${TESTS}/${file##*/} : ${RESET}"
+
+        # Si le test a réussi
+        if [ $DIFF -eq 0 ]
+        then
+            printf "${GREEN}PASSED${RESET}\n"
+        else
+            printf "${RED}FAILED${RESET}\n"
+        fi
+    fi
 done
