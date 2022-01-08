@@ -99,8 +99,20 @@ typedef struct
 #define EF_ARM_UNKNOWN        0x003FF9de
 
 
+/**
+ * @brief Fonction qui renvoie une structure Elf32_Ehdr correspondant à l'entête du fichier ELF passé en paramètre
+ *
+ * @param f (FILE *) Fichier ELF ouvert
+ * @param nom_fichier (char *) Nom|Chemin du Fichier ELF
+ * @return (Elf32_Ehdr) Renvoie une structure Elf32_Ehdr correspondant à l'entête
+ */
 Elf32_Ehdr lire_elf_header(FILE *f, char *nom_fichier);
 
+/**
+ * @brief Fonction qui affiche une structure Elf32_Ehdr correspondant à l'entête d'un fichier ELF
+ *
+ * @param hdr Structure Elf32_Ehdr correspondant à l'entête d'un fichier ELF
+ */
 void afficher_elf_header(Elf32_Ehdr ehdr);
 
 
