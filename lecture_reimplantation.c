@@ -77,6 +77,7 @@ void liberer_relocations(Relocations *reloc, Elf32_Ehdr ehdr) {
 }
 
 void afficher_relocations(Relocations *reloc, Elf32_Ehdr ehdr, Elf32_Shdr *shdr, char *shstrtab, Elf32_Sym *sym) {
+    int i = 0;
     for (int i = 0; i < ehdr.e_shnum; i++) {
         if (shdr[i].sh_type == SHT_REL || shdr[i].sh_type == SHT_RELA) {
             int entries = shdr[i].sh_size / shdr[i].sh_entsize;
@@ -124,7 +125,11 @@ void afficher_relocations(Relocations *reloc, Elf32_Ehdr ehdr, Elf32_Shdr *shdr,
                     printf(" + %x\n", reloc[i].rela[j].r_addend);
                 }
             }
+            i++;
         }
+    }
+    if(i == 0){
+        printf("Il n'y a pas de reimplantation pour ce fichier.");
     }
 }
 
