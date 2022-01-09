@@ -59,6 +59,7 @@ typedef struct
  * @param f (FILE *) Fichier ELF ouvert
  * @param ehdr (Elf32_Ehdr *) Structure contenant l'entête ELF
  * @param nom_fichier (char *) Nom du fichier ELF
+ * @param taille (long) Taille (en octets) du fichier f
  * @return (Elf32_Shdr *) Renvoie un tableau de Elf32_Shdr correspondant aux entêtes des sections
  */
 Elf32_Shdr *lire_section_header(FILE *f, Elf32_Ehdr ehdr, long taille);
