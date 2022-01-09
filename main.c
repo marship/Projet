@@ -57,12 +57,16 @@ int main(int argc, char **argv)
 
             if (f == NULL)
             {
-                fprintf(stderr, "Impossible d'ouvir le fichier : %s\n", nom_fichier);
+                fprintf(stderr, "ERREUR: Impossible d'ouvir le fichier : %s\n", nom_fichier);
                 exit(EXIT_FAILURE);
             }
 
+            // On calcule la taille du fichier (en octets)
+            fseek(f, 0L, SEEK_END);
+            long taille = ftell(f);
+
             ehdr = lire_elf_header(f, nom_fichier);
-            shdr = lire_section_header(f, ehdr);
+            shdr = lire_section_header(f, ehdr, taille);
             // strtab = lire_strtab(shdr, ehdr, nom_fichier);
             shstrtab = lire_shstrtab(f, shdr, ehdr);
             // sym = lire_symbole(nom_fichier, ehdr, shdr);

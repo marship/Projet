@@ -23,7 +23,6 @@ char *lire_string_table(FILE *f, Elf32_Addr addr, Elf32_Word size) {
         }
     }
 
-    fclose(f);
     return strtab;
 }
 

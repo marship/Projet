@@ -4,10 +4,15 @@
 #include "elf_header.h"
 #include "fonctions_utilitaires.h"
 
+#define E_SHENTSIZE 40
+#define E_PHENTSIZE 32
 
 Elf32_Ehdr lire_elf_header(FILE *f, char *nom_fichier)
 {
     Elf32_Ehdr ehdr;
+
+    // On se situe au début du fichier
+    rewind(f);
 
     // Lecture de e_ident
     for (int i = 0; i < EI_NIDENT; i++)
@@ -44,6 +49,26 @@ Elf32_Ehdr lire_elf_header(FILE *f, char *nom_fichier)
     {
         fprintf(stderr, "ERREUR: %s: Échec de lecture de l'en-tête du fichier\n", nom_fichier);
         exit(EXIT_FAILURE);
+    }
+
+    if (ehdr.e_shentsize < E_SHENTSIZE && ehdr.e_shentsize > 0) {
+        fprintf(stderr, "ERREUR: Le champ e_shentsize dans l'en-tête ELF est plus petit que la "
+                "taille d'un en-tête de section ELF\n");
+        exit(EXIT_FAILURE);
+    }
+    else if (ehdr.e_shentsize > E_SHENTSIZE) {
+        fprintf(stderr, "AVERTISSEMENT: Le champ e_shentsize dans l'en-tête ELF est plus grand "
+                "que la taille d'un en-tête de section ELF\n");
+    }
+
+    if (ehdr.e_type == ET_EXEC && ehdr.e_phentsize < E_PHENTSIZE && ehdr.e_phentsize > 0) {
+        fprintf(stderr, "ERREUR: Le champ e_phentsize dans l'en-tête ELF est plus petit que la "
+                "taille d'un en-tête de programme ELF\n");
+        exit(EXIT_FAILURE);
+    }
+    else if (ehdr.e_type == ET_EXEC && ehdr.e_phentsize > E_PHENTSIZE) {
+        fprintf(stderr, "AVERTISSEMENT: Le champ e_phentsize dans l'en-tête ELF est plus grand "
+                "que la taille d'un en-tête de programme ELF\n");
     }
 
     return ehdr;
@@ -266,7 +291,7 @@ void afficher_elf_header(Elf32_Ehdr ehdr)
 
     // Section header string table index
     printf("  Section header string table index: %u", ehdr.e_shstrndx);
-    if (ehdr.e_shstrndx >=  ehdr.e_shnum && ehdr.e_shstrndx > 0) {
+    if (ehdr.e_shstrndx >= ehdr.e_shnum && ehdr.e_shstrndx > 0) {
         printf(" <corrupt: out of range>");
     }
     printf("\n");

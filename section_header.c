@@ -6,13 +6,17 @@
 #include "fonctions_utilitaires.h"
 
 
-Elf32_Shdr *lire_section_header(FILE *f, Elf32_Ehdr ehdr)
+Elf32_Shdr *lire_section_header(FILE *f, Elf32_Ehdr ehdr, long taille)
 {
     // Allocation de la place nécessaire
     Elf32_Shdr *shdr = malloc(ehdr.e_shnum * sizeof(Elf32_Shdr));
+    if (shdr == NULL) {
+        fprintf(stderr, "ERREUR: Impossible d'allouer de la mémoire pour les en-têtes de section\n");
+        exit(EXIT_FAILURE);
+    }
 
     // Déplacement au début des en-têtes de section
-    if (fseek(f, ehdr.e_shoff, SEEK_SET) != 0)
+    if (fseek(f, ehdr.e_shoff, SEEK_SET) != 0 || taille < ehdr.e_shoff + ehdr.e_shnum * ehdr.e_shentsize)
     {
         fprintf(stderr,
                 "ERREUR: La lecture de %d octets va au delà de la fin du fichier pour En-têtes de section\n",

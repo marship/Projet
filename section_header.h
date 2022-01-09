@@ -61,7 +61,7 @@ typedef struct
  * @param nom_fichier (char *) Nom du fichier ELF
  * @return (Elf32_Shdr *) Renvoie un tableau de Elf32_Shdr correspondant aux entêtes des sections
  */
-Elf32_Shdr *lire_section_header(FILE *f, Elf32_Ehdr ehdr);
+Elf32_Shdr *lire_section_header(FILE *f, Elf32_Ehdr ehdr, long taille);
 
 /**
  * @brief Fonction qui affiche les entêtes des sections d'un fichier ELF
