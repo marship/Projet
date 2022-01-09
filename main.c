@@ -15,8 +15,8 @@ void usage(char *name)
             "\n"
             "Options:\n"
             "  -h --file-header       Afficher l'en-tête du fichier ELF\n"
-            "  -S --section-header    Afficher l'en-tête des sections\n"
-            "  -s --table-symbole     Afficher la table des symboles\n"
+            "  -S --section-headers   Afficher les en-têtes des sections\n"
+            "  -s --symbols           Afficher la table des symboles\n"
             "  -r --relocs            Afficher les réadressages (si présents)\n"
             "  -H --help              Afficher l'aide-mémoire\n",
             name);
@@ -41,9 +41,9 @@ int main(int argc, char **argv)
 
     struct option longopts[] = {
         { "file-header", required_argument, NULL, 'h' },
-        { "section-header ", required_argument, NULL, 'S' },
-        { "table-symbole", required_argument, NULL, 's' },
-        { "relocs", required_argument, NULL, 'r'},
+        { "section-headers", required_argument, NULL, 'S' },
+        { "symbols", required_argument, NULL, 's' },
+        { "relocs", required_argument, NULL, 'r' },
         { "help", no_argument, NULL, 'H' },
         { NULL, 0, NULL, 0 }
     };
