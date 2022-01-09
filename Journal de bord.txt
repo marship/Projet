@@ -1,14 +1,14 @@
 JOUR 0/Avant les vacances :
 
-	Lors de la formation des groupes, nous étions quatre à nous connaitre (Paul, Mathis, Adrien, Alban) et nous nous sommes liés au binôme que forme Thibault et Bruno afin de créer un groupe de six personnes.
+	Lors de la formation des groupes, nous étions quatre à nous connaitre (Paul, Mathis, Adrien, Alban) et nous nous sommes liés au binôme que forme Thibault et Bruno afin       de créer un groupe de six personnes.
     Nous avons fait connaissance les-uns avec les autres puis nous avons commencé à lire le sujet pour pouvoir démarrer le projet.
     C'est avec le sujet en tête que nous sommes partis en vacances.
 
 JOUR 1/Lundi
 
 	Après relecture du sujet au retour des vacances, on remarque que les cinq premières étapes peuvent être réalisées en parallèle pour gagner en efficacité.
-    On décide alors de réaliser la première étape tous ensemble pour se mettre dans le bain puis une fois cette dernière terminée nous nous sommes réparti les étapes suivantes en binômes.
-    On a eu quelques difficultés pour lire le fichier ELF, mais une fois ce problème réglé nous avons pu avancer assez tranquillement. À la fin de la journée, nous avons réalisé une fonction qui déchiffre les fichiers ELF en 64 bits et en Big Endian malheureusement ce n'était pas ce qu'il fallait faire.
+    On décide alors de réaliser la première étape tous ensemble pour se mettre dans le bain puis une fois cette dernière terminée nous nous sommes réparti les étapes suivantes       en binômes.
+    On a eu quelques difficultés pour lire le fichier ELF, mais une fois ce problème réglé nous avons pu avancer assez tranquillement. À la fin de la journée, nous avons réalisé     une fonction qui déchiffre les fichiers ELF en 64 bits et en Big Endian malheureusement ce n'était pas ce qu'il fallait faire.
     Avant de passer à l'étape 2, nous devrons donc refaire cette fonction afin quelle respecte les consignes du sujet.
 
 JOUR2/Mardi
@@ -17,7 +17,7 @@ JOUR2/Mardi
     En effet, le sens de lecture étant différent, nous n'obtenions pas les résultats attendus.
     Après quelques heures passées à chercher une méthode pour passer du Big Endian au Little Endian, nous sommes parvenus à obtenir une méthode fonctionnelle.
     En se penchant sur l'étape deux, on voit qu'il est nécessaire de lire des données à partir d'une certaine adresse.
-    On récupère facilement cette adresse grâce à une fonction réalisée à l'étape une, mais le problème est d'arriver à lire un fichier binaire à partir d'une certaine adresse, ici l'adresse correspondant à la table des sections
+    On récupère facilement cette adresse grâce à une fonction réalisée à l'étape une, mais le problème est d'arriver à lire un fichier binaire à partir d'une certaine adresse,       ici l'adresse correspondant à la table des sections
 
 JOUR3/Mercredi
 
@@ -34,3 +34,15 @@ JOUR4/Jeudi
 	L'audit d'oral s'est bien passé, nous sommes relativement dans les temps et notre code à l'air correct, même s'il est perfectible. Il nous a été conseillé de factoriser     les fonctions d'ouverture de fichier afin d'éviter les répétitions et d'automatiser les test, pour nous rendre la tâche plus facile pour la prochaine Etape.
     Nous avons donc continué de travailler en groupe afin d'avancer de façon équilibrée. A la fin de la journée, les parties 2, 4 et 5 sont presques complètes puisqu'il ne 	     leur manque que de la finition. 
     Avec comme objectif de faire une grosse partie de l'étape 3 demain afin de pouvoir finir de manière propre la Phase 1 pendant le week-end.
+
+JOUR5/Vendredi
+
+	Journée perturbée par le Covid. Mathis reçoit enfin le résultat de son test effectué mercredi et celui-ci est positif. Il ne pourra dnoc pas être présent lors de la 	    soutenance.
+   Adrien étant malade depuis hier soir et Alban et Paul ayant mangé avec lui mardi, il est nécessaire d'aller se faire tester. A la fin de la matinée, Alban et Peul sont          testés négatifs. Adrien passe tout son après-midi à faire la queue dans une pharamacie pour finalement ne pas pouvoir se faire tester.
+   Malgré tout, la partie 3 avance bien et est presque terminée à la fin de la journée.
+
+WEEK-END
+
+	Le but du week-end était de boucler correctement la Partie 1 , comprenant les 5 étapes. Tout le monde travaille donc de façon a faire avancer toutes les parties.
+   L'étape 3 est complètement terminée d'un point de vue pratique, il reste a implémenter la lecture de la section en paramètre et non dans le code en dur.
+   A la fin de la semaine, la Partie 1 est globalement complète, encore quelques détails sur les étapes 2 et 4 deumeurent mais seront réglés prochainement.
