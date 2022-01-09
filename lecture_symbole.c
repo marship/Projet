@@ -18,7 +18,7 @@ Elf32_Sym *lire_symbole(char *nom_fichier, Elf32_Ehdr ehdr, Elf32_Shdr *shdr)
     // Recherche de la section des symboles
     noSection = 0;
 
-    while (shdr[noSection].sh_type != SHT_SYMTAB && noSection < ehdr.e_shnum)
+    while (noSection < ehdr.e_shnum && shdr[noSection].sh_type != SHT_SYMTAB)
     {
         noSection++;
     }
@@ -76,7 +76,7 @@ void afficher_symboles(Elf32_Sym *sym, char *nom_fichier, char *shstrtab)
         exit(EXIT_FAILURE);
     }
 
-    printf("[Nr]\tValeur\tTaille\tType\tLien\tVisibilite\tNDX\tNom\n");
+    printf("[Nr]\tValeur\t\tTaille\tType\tLien\tVisibilite\tNDX\tNom\n");
     for (int i = 0; i < nbSym; i++)
     {
         printf("[%d]\t", i);             // Affichage du numéro du symbole
@@ -168,7 +168,7 @@ void afficher_symboles(Elf32_Sym *sym, char *nom_fichier, char *shstrtab)
             break;
         }
 
-        printf("%x\t", sym[i].st_shndx); // Affichage du ndx
+        printf("\t%x\t", sym[i].st_shndx); // Affichage du ndx
 
         // Deplacement au début des symboles
         if (fseek(f, sym[i].st_name, SEEK_SET) != 0)
