@@ -54,11 +54,16 @@ Elf32_Shdr *lire_section(char *nom_fichier, Elf32_Ehdr ehdr)
 void afficher_section(Elf32_Shdr *shdr, Elf32_Ehdr ehdr, char *shstrtab){
     printf("Il y a %d en-tete de sections, qui commencent a offset 0x%x\n", ehdr.e_shnum, ehdr.e_shoff);
     printf("Section Headers :\n");
-    printf("[Nb] Name\tType\t\tAddr\tOff\tSize\tES FLG LK INF AL\n");
+    printf("[Nb] Type\tAddr\t\tOff\tSize\tES FLG LK INF\tAL Name\n");
     for (int i = 0; i < ehdr.e_shnum; i++){
-        printf("[%d] ", i);
-        afficher_chaine(shstrtab, shdr[i].sh_name);
-        printf("\t");
+        printf("[%d]", i);
+        if(i < 10)
+        {
+            printf("  ");
+        } else {
+            printf(" ");
+        }
+
         switch (shdr[i].sh_type)
         {
         case SHT_NULL:
@@ -125,37 +130,39 @@ void afficher_section(Elf32_Shdr *shdr, Elf32_Ehdr ehdr, char *shstrtab){
             printf("Inconnu\t");
             break;
         }
-        printf("%.8x ", shdr[i].sh_addr);
-        printf("%.6x ", shdr[i].sh_offset);
-        printf("%.6x ", shdr[i].sh_size);
+        printf("%.8x\t", shdr[i].sh_addr);
+        printf("%.6x\t", shdr[i].sh_offset);
+        printf("%.6x\t", shdr[i].sh_size);
         printf("%.2x ", shdr[i].sh_entsize);
 
         switch (shdr[i].sh_flags)
         {
         case SHF_WRITE:
-            printf("W ");
+            printf(" W\t");
             break;
 
         case SHF_ALLOC:
-            printf("A ");
+            printf(" A\t");
             break;
 
         case SHF_EXECINSTR:
-            printf("E ");
+            printf(" E\t");
             break;
 
         case SHF_MASKPROC:
-            printf("M ");
+            printf(" M\t");
             break;
         
         default:
-            printf(" ");
+            printf("  \t");
             break;
         }
 
-        printf("%x ", shdr[i].sh_link);
-        printf("%d ", shdr[i].sh_info);
-        printf("%x\n", shdr[i].sh_addralign);
+        printf("%x  ", shdr[i].sh_link);
+        printf("%d\t", shdr[i].sh_info);
+        printf("%x ", shdr[i].sh_addralign);
+        afficher_chaine(shstrtab, shdr[i].sh_name);
+        printf("\n");
     }
     
 }
