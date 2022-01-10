@@ -77,6 +77,10 @@ void afficher_section(Elf32_Shdr *shdr, Elf32_Ehdr ehdr, char *shstrtab){
         case SHT_SYMTAB:
             printf("SYMTAB\t");
             break;
+                
+        case SHT_STRTAB:
+            printf("STRTAB\t");
+            break;
         
         case SHT_RELA:
             printf("RELA\t");
