@@ -8,6 +8,7 @@
 #include "string_table.h"
 #include "section.h"
 #include "relocation.h"
+#include "symbol.h"
 
 
 void usage(char *name)
@@ -114,10 +115,10 @@ int main(int argc, char **argv)
     
             Elf32_Ehdr ehdr = lire_elf_header(f, nom_fichier);
             Elf32_Shdr *shdr = lire_section_header(f, ehdr, taille);
-            // char *strtab = lire_strtab(shdr, ehdr, nom_fichier);
+            char *strtab = lire_strtab(f, shdr, ehdr);
             char *shstrtab = lire_shstrtab(f, shdr, ehdr);
-            // Relocations *reloc = lire_relocations(f, ehdr, shdr);
-            // Elf32_Sym *sym = lire_symbole(nom_fichier, ehdr, shdr);
+            Relocations *reloc = lire_relocations(f, ehdr, shdr);
+            Elf32_Sym *sym = lire_symboles(f, ehdr, shdr);
 
             if (opt_h) {
                 afficher_elf_header(ehdr);
@@ -125,17 +126,22 @@ int main(int argc, char **argv)
 
             if (opt_S) {
                 if (!opt_h) {
-                    printf("There are %d section headers, starting at offset 0x%x:\n", ehdr.e_shnum, ehdr.e_shoff);
+                    if (ehdr.e_shnum == 1) {
+                        printf("There is %d section header, starting at offset 0x%x:\n", ehdr.e_shnum, ehdr.e_shoff);
+                    }
+                    else {
+                        printf("There are %d section headers, starting at offset 0x%x:\n", ehdr.e_shnum, ehdr.e_shoff);
+                    }
                 }
                 afficher_section_header(shdr, ehdr, shstrtab);
             }
 
             if (opt_r) {
-                // afficher_relocations(reloc, ehdr, shdr, shstrtab, sym);
+                afficher_relocations(reloc, ehdr, shdr, shstrtab, sym);
             }
 
             if (opt_s) {
-                // afficher_symboles(sym, nom_fichier);
+                afficher_symboles(sym, ehdr, shdr, shstrtab, strtab);
             }
 
             if (opt_x) {
@@ -172,8 +178,10 @@ int main(int argc, char **argv)
             }
 
             free(shdr);
-            // free(strtab);
+            free(strtab);
             free(shstrtab);
+            liberer_relocations(reloc, ehdr);
+            free(sym);
             fclose(f);
         }
     }

@@ -70,7 +70,7 @@ void liberer_relocations(Relocations *reloc, Elf32_Ehdr ehdr) {
         if (reloc[i].rel != NULL) {
             free(reloc[i].rel);
         }
-        if (reloc[i].rela != NULL) {
+        else if (reloc[i].rela != NULL) {
             free(reloc[i].rela);
         }
     }

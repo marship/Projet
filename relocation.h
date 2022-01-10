@@ -4,7 +4,7 @@
 #include "elf_types.h"
 #include "elf_header.h"
 #include "section_header.h"
-#include "elf_symbol.h"
+#include "symbol.h"
 
 /* ELF32 Structure de la table des symboles en 32-bit */
 typedef struct {
