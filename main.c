@@ -129,7 +129,7 @@ int main(int argc, char **argv)
                     if (ehdr.e_shnum == 1) {
                         printf("There is %d section header, starting at offset 0x%x:\n", ehdr.e_shnum, ehdr.e_shoff);
                     }
-                    else {
+                    else if (ehdr.e_shnum > 1) {
                         printf("There are %d section headers, starting at offset 0x%x:\n", ehdr.e_shnum, ehdr.e_shoff);
                     }
                 }
@@ -162,6 +162,17 @@ int main(int argc, char **argv)
                                 num_x[i] = j;
                             }
                         }
+                        if (num_x[i] == 0) {
+                            fprintf(stderr, "AVERTISSEMENT: La section « %s » n'a pas été vidangée "
+                                    "parce qu'inexistante !\n", arg_x[i]);
+                            exit(EXIT_FAILURE);
+                        }
+                    }
+                    else if (num_x[i] >= ehdr.e_shnum) {
+                        fprintf(stderr,
+                                "AVERTISSEMENT: La section %ld n'a pas été vidangée parce qu'inexistante !\n",
+                                num_x[i]);
+                        exit(EXIT_FAILURE);
                     }
                 }
 
@@ -177,11 +188,19 @@ int main(int argc, char **argv)
                 free(num_x);
             }
 
-            free(shdr);
-            free(strtab);
-            free(shstrtab);
+            if (shdr != NULL) {
+                free(shdr);
+            }
+            if (strtab != NULL) {
+                free(strtab);
+            }
+            if (shstrtab != NULL) {
+                free(shstrtab);
+            }
             liberer_relocations(reloc, ehdr);
-            free(sym);
+            if (sym != NULL) {
+                free(sym);
+            }
             fclose(f);
         }
     }

@@ -8,6 +8,10 @@
 
 unsigned char *lire_section(FILE *f, Elf32_Shdr *shdr, int num)
 {
+    if (shdr == NULL) {
+        return NULL;
+    }
+
     unsigned char *sect = malloc(shdr[num].sh_size * sizeof(char));
 
     if (sect == NULL) {
@@ -36,6 +40,11 @@ unsigned char *lire_section(FILE *f, Elf32_Shdr *shdr, int num)
 
 void afficher_section(unsigned char *sect, char *shstrtab, Elf32_Shdr shdr)
 {
+    if (sect == NULL || shstrtab == NULL) {
+        fprintf(stderr, "AVERTISSEMENT: La section n'a pas été vidangée parce qu'inexistante !");
+        exit(EXIT_FAILURE);
+    }
+
     uint32_t i = 0;
     int j = 0;
     unsigned char ligne[17];

@@ -9,6 +9,10 @@ void afficher_type_relocation(unsigned char t);
 
 
 Relocations *lire_relocations(FILE *f, Elf32_Ehdr ehdr, Elf32_Shdr *shdr) {
+    if (shdr == NULL) {
+        return NULL;
+    }
+
     Relocations *reloc = malloc(ehdr.e_shnum * sizeof(Relocations));
 
     if (reloc == NULL) {
@@ -79,6 +83,11 @@ void liberer_relocations(Relocations *reloc, Elf32_Ehdr ehdr) {
 }
 
 void afficher_relocations(Relocations *reloc, Elf32_Ehdr ehdr, Elf32_Shdr *shdr, char *shstrtab, Elf32_Sym *sym) {
+    if (shdr == NULL || reloc == NULL || sym == NULL || shstrtab == NULL) {
+        printf("\nThere are no relocations in this file.\n");
+        return;
+    }
+
     for (int i = 0; i < ehdr.e_shnum; i++) {
         if (shdr[i].sh_type == SHT_REL || shdr[i].sh_type == SHT_RELA) {
             int entries = shdr[i].sh_size / shdr[i].sh_entsize;

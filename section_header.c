@@ -8,6 +8,10 @@
 
 Elf32_Shdr *lire_section_header(FILE *f, Elf32_Ehdr ehdr, long taille)
 {
+    if (ehdr.e_shnum == 0) {
+        return NULL;
+    }
+
     // Allocation de la place nécessaire
     Elf32_Shdr *shdr = malloc(ehdr.e_shnum * sizeof(Elf32_Shdr));
     
@@ -52,6 +56,11 @@ Elf32_Shdr *lire_section_header(FILE *f, Elf32_Ehdr ehdr, long taille)
 
 void afficher_section_header(Elf32_Shdr *shdr, Elf32_Ehdr ehdr, char *shstrtab)
 {
+    if (shdr == NULL || shstrtab == NULL) {
+        printf("\nThere are no sections in this file.\n");
+        return;
+    }
+
     printf("\nSection Headers:\n");
     printf("  [Nr] Name              Type            Addr     Off    Size   ES Flg Lk Inf Al\n");
 

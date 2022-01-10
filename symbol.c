@@ -14,6 +14,10 @@ int nbSym = 0;
 
 Elf32_Sym *lire_symboles(FILE *f, Elf32_Ehdr ehdr, Elf32_Shdr *shdr)
 {
+    if (shdr == NULL) {
+        return NULL;
+    }
+
     // Recherche de la section des symboles
     while (shdr[noSection].sh_type != SHT_SYMTAB && noSection < ehdr.e_shnum)
     {
@@ -68,6 +72,11 @@ Elf32_Sym *lire_symboles(FILE *f, Elf32_Ehdr ehdr, Elf32_Shdr *shdr)
 
 void afficher_symboles(Elf32_Sym *sym, Elf32_Ehdr ehdr, Elf32_Shdr *shdr, char *shstrtab, char *strtab)
 {
+    if (sym == NULL || shdr == NULL || shstrtab == NULL || strtab == NULL) {
+        printf("\nDynamic symbol information is not available for displaying symbols.\n");
+        return;
+    }
+
     int entries = shdr[noSection].sh_size / shdr[noSection].sh_entsize;
 
     printf("\nSymbol table '");
