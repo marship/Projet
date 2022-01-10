@@ -152,11 +152,12 @@ Usage:
   ${PROJET}/main <options> fichiers-elf
 
 Options:
-  -h --file-header       Afficher l'en-tête du fichier ELF
-  -S --section-headers   Afficher les en-têtes des sections
-  -s --symbols           Afficher la table des symboles
-  -r --relocs            Afficher les réadressages (si présents)
-  -H --help              Afficher l'aide-mémoire
+  -h --file-header           Afficher l'en-tête du fichier ELF
+  -S --section-headers       Afficher les en-têtes des sections
+  -s --symbols               Afficher la table des symboles
+  -r --relocs                Afficher les réadressages (si présents)
+  -x --hex-dump=<numéro|nom> Afficher le contenu de la section <numéro|nom> sous forme d'octets
+  -H --help                  Afficher l'aide-mémoire
 END
 )
 
