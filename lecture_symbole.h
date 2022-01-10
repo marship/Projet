@@ -1,7 +1,6 @@
 #ifndef __LECTURE_SYMBOLE_H__
 #define __LECTURE_SYMBOLE_H__
 
-#include "elf_relocation.h"
 #include "elf_header.h"
 #include "section_header.h"
 #include "elf_types.h"

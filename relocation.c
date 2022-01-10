@@ -1,29 +1,27 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
-#include "lecture_reimplantation.h"
+#include "relocation.h"
 #include "fonctions_utilitaires.h"
 #include "string_table.h"
 
 void afficher_type_relocation(unsigned char t);
 
 
-Relocations *lire_relocations(char *nom_fichier, Elf32_Ehdr ehdr, Elf32_Shdr *shdr) {
-    FILE *f;
+Relocations *lire_relocations(FILE *f, Elf32_Ehdr ehdr, Elf32_Shdr *shdr) {
     Relocations *reloc = malloc(ehdr.e_shnum * sizeof(Relocations));
 
-    // Ouverture du fichier
-    f = fopen(nom_fichier, "rb");
-
-    if (f == NULL) {
-        fprintf(stderr, "Error: Can't open file %s\n", nom_fichier);
+    if (reloc == NULL) {
+        fprintf(stderr, "ERREUR: Impossible d'allouer de la mémoire pour les ré-adressages\n");
         exit(EXIT_FAILURE);
     }
 
     for (int i = 0; i < ehdr.e_shnum; i++) {
         if (shdr[i].sh_type == SHT_REL || shdr[i].sh_type == SHT_RELA) {
             if (fseek(f, shdr[i].sh_addr + shdr[i].sh_offset, SEEK_SET) != 0) {
-                fprintf(stderr, "Erreur de lecture du fichier %s\n", nom_fichier);
+                fprintf(stderr,
+                        "ERREUR: La lecture de %d octets va au delà de la fin du fichier pour les ré-adressages\n",
+                        shdr[i].sh_size);
                 exit(EXIT_FAILURE);
             }
 
@@ -33,9 +31,12 @@ Relocations *lire_relocations(char *nom_fichier, Elf32_Ehdr ehdr, Elf32_Shdr *sh
                 reloc[i].rel = malloc(entries * sizeof(Elf32_Rel));
 
                 for (int j = 0; j < entries; j++) {
-                    if (read_uint32(&(reloc[i].rel[j].r_offset), f, ehdr.e_ident[EI_DATA]) == 0
-                    || read_uint32(&(reloc[i].rel[j].r_info), f, ehdr.e_ident[EI_DATA]) == 0) {
-                        fprintf(stderr, "Error: %s: Failed to read file\n", nom_fichier);
+                    if (read_uint32(&(reloc[i].rel[j].r_offset), f, ehdr.e_ident[EI_DATA]) == 0 ||
+                        read_uint32(&(reloc[i].rel[j].r_info), f, ehdr.e_ident[EI_DATA]) == 0)
+                    {
+                        fprintf(stderr,
+                                "ERREUR: La lecture de %d octets va au delà de la fin du fichier pour les ré-adressages\n",
+                                shdr[i].sh_size);
                         exit(EXIT_FAILURE);
                     }
                 }
@@ -44,18 +45,19 @@ Relocations *lire_relocations(char *nom_fichier, Elf32_Ehdr ehdr, Elf32_Shdr *sh
                 reloc[i].rela = malloc(entries * sizeof(Elf32_Rela));
 
                 for (int j = 0; j < entries; j++) {
-                    if (read_uint32(&(reloc[i].rela[j].r_offset), f, ehdr.e_ident[EI_DATA]) == 0
-                    || read_uint32(&(reloc[i].rela[j].r_info), f, ehdr.e_ident[EI_DATA]) == 0
-                    || read_int32(&(reloc[i].rela[j].r_addend), f, ehdr.e_ident[EI_DATA]) == 0) {
-                        fprintf(stderr, "Error: %s: Failed to read file\n", nom_fichier);
+                    if (read_uint32(&(reloc[i].rela[j].r_offset), f, ehdr.e_ident[EI_DATA]) == 0 ||
+                        read_uint32(&(reloc[i].rela[j].r_info), f, ehdr.e_ident[EI_DATA]) == 0 ||
+                        read_int32(&(reloc[i].rela[j].r_addend), f, ehdr.e_ident[EI_DATA]) == 0)
+                    {
+                        fprintf(stderr,
+                                "ERREUR: La lecture de %d octets va au delà de la fin du fichier pour les ré-adressages\n",
+                                shdr[i].sh_size);
                         exit(EXIT_FAILURE);
                     }
                 }
             }
         }
     }
-    fclose(f);
-
     return reloc;
 }
 

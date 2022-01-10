@@ -1,5 +1,5 @@
-#ifndef __ELF_RELOCATION_H__
-#define __ELF_RELOCATION_H__
+#ifndef __RELOCATION_H__
+#define __RELOCATION_H__
 
 #include "elf_types.h"
 #include "elf_header.h"
@@ -169,7 +169,7 @@ typedef union {
 #define R_ARM_IRELATIVE          160
 
 
-Relocations *lire_relocations(char *nom_fichier, Elf32_Ehdr ehdr, Elf32_Shdr *shdr);
+Relocations *lire_relocations(FILE *f, Elf32_Ehdr ehdr, Elf32_Shdr *shdr);
 
 void liberer_relocations(Relocations *reloc, Elf32_Ehdr ehdr);
 
