@@ -2,9 +2,11 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <getopt.h>
+#include <string.h>
 #include "elf_header.h"
 #include "section_header.h"
 #include "string_table.h"
+#include "section.h"
 
 
 void usage(char *name)
@@ -14,22 +16,30 @@ void usage(char *name)
             "  %s <options> fichiers-elf\n"
             "\n"
             "Options:\n"
-            "  -h --file-header       Afficher l'en-tête du fichier ELF\n"
-            "  -S --section-headers   Afficher les en-têtes des sections\n"
-            "  -s --symbols           Afficher la table des symboles\n"
-            "  -r --relocs            Afficher les réadressages (si présents)\n"
-            "  -H --help              Afficher l'aide-mémoire\n",
+            "  -h --file-header           Afficher l'en-tête du fichier ELF\n"
+            "  -S --section-headers       Afficher les en-têtes des sections\n"
+            "  -s --symbols               Afficher la table des symboles\n"
+            "  -r --relocs                Afficher les réadressages (si présents)\n"
+            "  -x --hex-dump=<numéro|nom> Afficher le contenu de la section <numéro|nom> sous forme d'octets\n"
+            "  -H --help                  Afficher l'aide-mémoire\n",
             name);
 }
 
 int main(int argc, char **argv)
 {
     int opt;
-    int opt_h = 0, opt_S = 0, opt_s = 0, opt_r = 0;
+    int opt_h = 0, opt_S = 0, opt_s = 0, opt_r = 0, opt_x = 0;
 
     if (argc < 2)
     {
         usage(argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    char **arg_x = malloc((argc - 1) * sizeof(char *));
+
+    if (arg_x == NULL) {
+        fprintf(stderr, "ERREUR: Impossible d'allouer de la mémoire pour la section\n");
         return EXIT_FAILURE;
     }
 
@@ -38,27 +48,46 @@ int main(int argc, char **argv)
         { "section-headers", no_argument, NULL, 'S' },
         { "symbols", no_argument, NULL, 's' },
         { "relocs", no_argument, NULL, 'r' },
+        { "hex-dump", required_argument, NULL, 'x' },
         { "help", no_argument, NULL, 'H' },
         { NULL, 0, NULL, 0 }
     };
 
-    while ((opt = getopt_long(argc, argv, "hSsrH", longopts, NULL)) != -1) {
-        switch(opt) {
+    while ((opt = getopt_long(argc, argv, "hSsrx:H", longopts, NULL)) != -1) {
+        switch (opt) {
         case 'h':
             opt_h = 1;
             break;
+
         case 'S':
             opt_S = 1;
             break;
+
         case 's':
             opt_s = 1;
             break;
+
         case 'r':
             opt_r = 1;
             break;
+
+        case 'x':
+            opt_x++;
+
+            arg_x[opt_x-1] = malloc(strlen(optarg) * sizeof(char));
+
+            if (arg_x[opt_x-1] == NULL) {
+                fprintf(stderr, "ERREUR: Impossible d'allouer de la mémoire pour la section\n");
+                return EXIT_FAILURE;
+            }
+
+            strcpy(arg_x[opt_x-1], optarg);
+            break;
+
         case 'H':
             usage(argv[0]);
             return EXIT_SUCCESS;
+
         default:
             usage(argv[0]);
             return EXIT_FAILURE;
@@ -66,7 +95,7 @@ int main(int argc, char **argv)
     }
 
     for (int i = 1; i < argc; i++) {
-        if (argv[i][0] != '-') {
+        if (argv[i][0] != '-' && strcmp(argv[i-1], "-x") != 0 && strcmp(argv[i-1], "--hex-dump") != 0) {
             char *nom_fichier = argv[i];
 
             // Ouverture du fichier
@@ -89,8 +118,6 @@ int main(int argc, char **argv)
             // Elf32_Sym *sym = lire_symbole(nom_fichier, ehdr, shdr);
             // Relocations *reloc = lire_relocations(nom_fichier, ehdr, shdr);
 
-            fclose(f);
-
             if (opt_h) {
                 afficher_elf_header(ehdr);
             }
@@ -109,8 +136,51 @@ int main(int argc, char **argv)
             if (opt_r) {
                 // afficher_relocations(reloc, ehdr, shdr, shstrtab, sym);
             }
+
+            if (opt_x) {
+                long *num_x = malloc(opt_x * sizeof(long));
+
+                if (num_x == NULL) {
+                    fprintf(stderr, "ERREUR: Impossible d'allouer de la mémoire pour la section\n");
+                    return EXIT_FAILURE;
+                }
+
+                for (int i = 0; i < opt_x; i++) {
+                    char *end = NULL;
+                    num_x[i] = strtol(arg_x[i], &end, 10);
+
+                    if (num_x[i] == 0 && end == arg_x[i]) {
+                        for (int j = 0; j < ehdr.e_shnum; j++) {
+                            if (strcmp(arg_x[i], shstrtab+shdr[j].sh_name) == 0) {
+                                num_x[i] = j;
+                            }
+                        }
+                    }
+                }
+
+                for (int i = 0; i < ehdr.e_shnum; i++) {
+                    for (int j = 0; j < opt_x; j++) {
+                        if (num_x[j] == i) {
+                            unsigned char *section = lire_section(f, shdr, i);
+                            afficher_section(section, shstrtab, shdr[i]);
+                            free(section);
+                        }
+                    }
+                }
+                free(num_x);
+            }
+
+            free(shdr);
+            // free(strtab);
+            free(shstrtab);
+            fclose(f);
         }
     }
+
+    for (int i = 0; i < opt_x; i++) {
+        free(arg_x[i]);
+    }
+    free(arg_x);
 
     return EXIT_SUCCESS;
 }
