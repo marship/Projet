@@ -66,6 +66,8 @@ int main(int argc, char **argv)
         switch(opt) {
 		case 'h':
 			afficher_entete(ehdr);
+            printf("\n\nTEST !!! \n");
+            extension_fichier(nom_fichier);
 			break;
 		case 'S':
 			afficher_section(shdr, ehdr, shstrtab);

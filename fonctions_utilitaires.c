@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <string.h>
 #include "fonctions_utilitaires.h"
 #include "elf_header.h"
 
@@ -107,4 +108,17 @@ int read_int32(int32_t *ptr, FILE *stream, unsigned char endian)
         *ptr = ((int32_t)b1) << 24 | ((int32_t)b2) << 16 | ((int32_t)b3) << 8 | (int32_t)b4;
     }
     return 1;
+}
+
+int extension_fichier(char *nom)
+{
+    char *ext = strrchr(nom, '.');
+    if (ext == NULL) {
+        printf("Pas d'extension\n");
+        return 0;
+    }
+    else {
+        printf("Extension : %s\n", ext);
+        return 1;
+    }
 }
