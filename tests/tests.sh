@@ -176,7 +176,7 @@ afficher_separateur
 
 # --------------------------------------------------------------------------------
 
-options=("-h" "-S" "-s" "-r")
+options=("-h" "-S" "-s" "-r" "-hSsr")
 
 for opt in "${options[@]}"
 do
@@ -192,6 +192,9 @@ do
     elif [ ${opt} = "-r" ]
     then
         CATEGORIE="Tests d'affichage des réadressages"
+    elif [ ${opt} = "-hSsr" ]
+    then
+        CATEGORIE="Tests d'affichage complet"
     fi
 
     afficher_categorie

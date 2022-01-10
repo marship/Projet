@@ -25,13 +25,7 @@ void usage(char *name)
 int main(int argc, char **argv)
 {
     int opt;
-    char *nom_fichier = NULL;
-    Elf32_Ehdr ehdr;
-    Elf32_Shdr *shdr;
-    // char *strtab = NULL;
-    char *shstrtab = NULL;
-    // Elf32_Sym *sym;
-    // Relocations *reloc;
+    int opt_h = 0, opt_S = 0, opt_s = 0, opt_r = 0;
 
     if (argc < 2)
     {
@@ -40,17 +34,40 @@ int main(int argc, char **argv)
     }
 
     struct option longopts[] = {
-        { "file-header", required_argument, NULL, 'h' },
-        { "section-headers", required_argument, NULL, 'S' },
-        { "symbols", required_argument, NULL, 's' },
-        { "relocs", required_argument, NULL, 'r' },
+        { "file-header", no_argument, NULL, 'h' },
+        { "section-headers", no_argument, NULL, 'S' },
+        { "symbols", no_argument, NULL, 's' },
+        { "relocs", no_argument, NULL, 'r' },
         { "help", no_argument, NULL, 'H' },
         { NULL, 0, NULL, 0 }
     };
 
-    while ((opt = getopt_long(argc, argv, "h:S:s:r:H", longopts, NULL)) != -1) {
-        if (opt != 'H') {
-            nom_fichier = optarg;
+    while ((opt = getopt_long(argc, argv, "hSsrH", longopts, NULL)) != -1) {
+        switch(opt) {
+        case 'h':
+            opt_h = 1;
+            break;
+        case 'S':
+            opt_S = 1;
+            break;
+        case 's':
+            opt_s = 1;
+            break;
+        case 'r':
+            opt_r = 1;
+            break;
+        case 'H':
+            usage(argv[0]);
+            return EXIT_SUCCESS;
+        default:
+            usage(argv[0]);
+            return EXIT_FAILURE;
+        }
+    }
+
+    for (int i = 1; i < argc; i++) {
+        if (argv[i][0] != '-') {
+            char *nom_fichier = argv[i];
 
             // Ouverture du fichier
             FILE *f = fopen(nom_fichier, "rb");
@@ -64,37 +81,36 @@ int main(int argc, char **argv)
             // On calcule la taille du fichier (en octets)
             fseek(f, 0L, SEEK_END);
             long taille = ftell(f);
-
-            ehdr = lire_elf_header(f, nom_fichier);
-            shdr = lire_section_header(f, ehdr, taille);
-            // strtab = lire_strtab(shdr, ehdr, nom_fichier);
-            shstrtab = lire_shstrtab(f, shdr, ehdr);
-            // sym = lire_symbole(nom_fichier, ehdr, shdr);
-            // reloc = lire_relocations(nom_fichier, ehdr, shdr);
+    
+            Elf32_Ehdr ehdr = lire_elf_header(f, nom_fichier);
+            Elf32_Shdr *shdr = lire_section_header(f, ehdr, taille);
+            // char *strtab = lire_strtab(shdr, ehdr, nom_fichier);
+            char *shstrtab = lire_shstrtab(f, shdr, ehdr);
+            // Elf32_Sym *sym = lire_symbole(nom_fichier, ehdr, shdr);
+            // Relocations *reloc = lire_relocations(nom_fichier, ehdr, shdr);
 
             fclose(f);
-        }
 
-        switch(opt) {
-        case 'h':
-            afficher_elf_header(ehdr);
-            break;
-        case 'S':
-            afficher_section_header(shdr, ehdr, shstrtab);
-            break;
-        case 's':
-            // afficher_symboles(sym, nom_fichier);
-            break;
-        case 'r':
-            // afficher_relocations(reloc, ehdr, shdr, shstrtab, sym);
-            break;
-        case 'H':
-            usage(argv[0]);
-            return EXIT_SUCCESS;
-        default:
-            usage(argv[0]);
-            return EXIT_FAILURE;
+            if (opt_h) {
+                afficher_elf_header(ehdr);
+            }
+
+            if (opt_S) {
+                if (!opt_h) {
+                    printf("There are %d section headers, starting at offset 0x%x:\n", ehdr.e_shnum, ehdr.e_shoff);
+                }
+                afficher_section_header(shdr, ehdr, shstrtab);
+            }
+
+            if (opt_s) {
+                // afficher_symboles(sym, nom_fichier);
+            }
+
+            if (opt_r) {
+                // afficher_relocations(reloc, ehdr, shdr, shstrtab, sym);
+            }
         }
     }
+
     return EXIT_SUCCESS;
 }

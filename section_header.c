@@ -52,7 +52,6 @@ Elf32_Shdr *lire_section_header(FILE *f, Elf32_Ehdr ehdr, long taille)
 
 void afficher_section_header(Elf32_Shdr *shdr, Elf32_Ehdr ehdr, char *shstrtab)
 {
-    printf("There are %d section headers, starting at offset 0x%x:\n", ehdr.e_shnum, ehdr.e_shoff);
     printf("\nSection Headers:\n");
     printf("  [Nr] Name              Type            Addr     Off    Size   ES Flg Lk Inf Al\n");
 
