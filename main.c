@@ -115,8 +115,8 @@ int main(int argc, char **argv)
             Elf32_Shdr *shdr = lire_section_header(f, ehdr, taille);
             // char *strtab = lire_strtab(shdr, ehdr, nom_fichier);
             char *shstrtab = lire_shstrtab(f, shdr, ehdr);
-            // Elf32_Sym *sym = lire_symbole(nom_fichier, ehdr, shdr);
             // Relocations *reloc = lire_relocations(nom_fichier, ehdr, shdr);
+            // Elf32_Sym *sym = lire_symbole(nom_fichier, ehdr, shdr);
 
             if (opt_h) {
                 afficher_elf_header(ehdr);
@@ -129,12 +129,12 @@ int main(int argc, char **argv)
                 afficher_section_header(shdr, ehdr, shstrtab);
             }
 
-            if (opt_s) {
-                // afficher_symboles(sym, nom_fichier);
-            }
-
             if (opt_r) {
                 // afficher_relocations(reloc, ehdr, shdr, shstrtab, sym);
+            }
+
+            if (opt_s) {
+                // afficher_symboles(sym, nom_fichier);
             }
 
             if (opt_x) {

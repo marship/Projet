@@ -2,6 +2,9 @@
 #define __ELF_RELOCATION_H__
 
 #include "elf_types.h"
+#include "elf_header.h"
+#include "section_header.h"
+#include "elf_symbol.h"
 
 /* ELF32 Structure de la table des symboles en 32-bit */
 typedef struct {
@@ -14,6 +17,11 @@ typedef struct {
     Elf32_Word  r_info;
     Elf32_Sword r_addend;
 } Elf32_Rela;
+
+typedef union {
+    Elf32_Rel *rel;
+    Elf32_Rela *rela;
+} Relocations;
 
 /* r_info */
 #define ELF32_R_SYM(i)    ((i) >> 8)
@@ -159,5 +167,13 @@ typedef struct {
 #define R_ARM_THM_ALU_ABS_G3     135
 
 #define R_ARM_IRELATIVE          160
+
+
+Relocations *lire_relocations(char *nom_fichier, Elf32_Ehdr ehdr, Elf32_Shdr *shdr);
+
+void liberer_relocations(Relocations *reloc, Elf32_Ehdr ehdr);
+
+void afficher_relocations(Relocations *reloc, Elf32_Ehdr ehdr, Elf32_Shdr *shdr, char *shstrtab, Elf32_Sym *sym);
+
 
 #endif
