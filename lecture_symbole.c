@@ -176,7 +176,7 @@ void afficher_symboles(Elf32_Sym *sym, char *nom_fichier, char *shstrtab)
             fprintf(stderr, "Erreur de lecture du fichier %s\n", nom_fichier);
             exit(EXIT_FAILURE);
         }
-        afficher_chaine(shstrtab, sym[i].st_name);
+        afficher_chaine(shstrtab, sym[i].st_name, 0);
         printf("\n");
     }
 }

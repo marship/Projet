@@ -29,7 +29,7 @@ char *lire_shstrtab(FILE *f, Elf32_Shdr *shdr, Elf32_Ehdr ehdr);
  *
  * @param strtab (char *) Tableau de caractères contenant tous les noms des symboles ou sections
  * @param index (Elf32_Word) Entier correspondant à l'indice auquel aller chercher la chaine de caractères
- * @param longueur_max (int) Longueur maximum à lire dans la string table
+ * @param longueur_max (int) Longueur maximum à lire dans la string table (si 0 la chaine est lue entièrement)
  * @return (int) Renvoie la longueur de la chaine affichée
  */
 int afficher_chaine(char *strtab, Elf32_Word index, int longueur_max);

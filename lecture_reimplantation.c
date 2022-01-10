@@ -82,7 +82,7 @@ void afficher_relocations(Relocations *reloc, Elf32_Ehdr ehdr, Elf32_Shdr *shdr,
             int entries = shdr[i].sh_size / shdr[i].sh_entsize;
 
             printf("\nRelocation section '");
-            afficher_chaine(shstrtab, shdr[i].sh_name);
+            afficher_chaine(shstrtab, shdr[i].sh_name, 0);
             printf("' at offset 0x%x contains %d ", shdr[i].sh_offset, entries);
 
             if (entries == 1) {
@@ -104,7 +104,7 @@ void afficher_relocations(Relocations *reloc, Elf32_Ehdr ehdr, Elf32_Shdr *shdr,
                     printf("%08x   ", sym[k].st_value);
 
                     int l = sym[k].st_shndx;
-                    afficher_chaine(shstrtab, shdr[l].sh_name);
+                    afficher_chaine(shstrtab, shdr[l].sh_name, 0);
                     printf("\n");
                 }
             }
@@ -120,7 +120,7 @@ void afficher_relocations(Relocations *reloc, Elf32_Ehdr ehdr, Elf32_Shdr *shdr,
                     printf("%08x   ", sym[k].st_value);
 
                     int l = sym[k].st_shndx;
-                    afficher_chaine(shstrtab, shdr[l].sh_name);
+                    afficher_chaine(shstrtab, shdr[l].sh_name, 0);
                     printf(" + %x\n", reloc[i].rela[j].r_addend);
                 }
             }
