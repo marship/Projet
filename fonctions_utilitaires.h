@@ -1,6 +1,8 @@
 #ifndef __FONCTIONS_UTILITAIRES_H__
 #define __FONCTIONS_UTILITAIRES_H__
 
+#include "elf_types.h"
+
 /**
  * @brief Fonction qui convertit une chaîne de caractère (représentant une valeure hexadécimale) en décimal
  *
@@ -38,5 +40,7 @@ int read_uint32(uint32_t *ptr, FILE *stream, unsigned char endian);
  * @return (int) Si la lecture echoue renvoie 0 | Si la lecture fonctionne renvoie 1
  */
 int read_int32(int32_t *ptr, FILE *stream, unsigned char endian);
+
+int compter_flags(Elf32_Word flags);
 
 #endif

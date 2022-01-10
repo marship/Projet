@@ -153,8 +153,8 @@ Usage:
 
 Options:
   -h --file-header       Afficher l'en-tête du fichier ELF
-  -S --section-header    Afficher l'en-tête des sections
-  -s --table-symbole     Afficher la table des symboles
+  -S --section-headers   Afficher les en-têtes des sections
+  -s --symbols           Afficher la table des symboles
   -r --relocs            Afficher les réadressages (si présents)
   -H --help              Afficher l'aide-mémoire
 END

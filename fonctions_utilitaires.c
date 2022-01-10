@@ -108,3 +108,16 @@ int read_int32(int32_t *ptr, FILE *stream, unsigned char endian)
     }
     return 1;
 }
+
+int compter_flags(Elf32_Word flags) {
+    int n = 0;
+
+    while (flags != 0) {
+        if ((flags & 1) == 1) {
+            n++;
+        }
+        flags = flags >> 1;
+    }
+
+    return n;
+}

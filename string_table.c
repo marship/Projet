@@ -14,6 +14,11 @@ char *lire_string_table(FILE *f, Elf32_Addr addr, Elf32_Word size) {
 
     char *strtab = malloc(size * sizeof(char));
 
+    if (strtab == NULL) {
+        fprintf(stderr, "ERREUR: Impossible d'allouer de la mémoire pour la string table\n");
+        exit(EXIT_FAILURE);
+    }
+
     for (Elf32_Word j = 0; j < size; j++) {
         if (fread(&strtab[j], sizeof(char), 1, f) == 0) {
             fprintf(stderr,
@@ -44,14 +49,19 @@ char *lire_shstrtab(FILE *f, Elf32_Shdr *shdr, Elf32_Ehdr ehdr) {
     return NULL;
 }
 
-void afficher_chaine(char *strtab, Elf32_Word index) {
+int afficher_chaine(char *strtab, Elf32_Word index, int longueur_max) {
     if (strtab == NULL) {
         fprintf(stderr, "Erreur: string table absente\n");
         exit(EXIT_FAILURE);
     }
 
-    while (strtab[index] != '\0') {
+    int longueur = 0;
+
+    while (strtab[index] != '\0' && (longueur < longueur_max || longueur_max == 0)) {
         printf("%c", strtab[index]);
         index++;
+        longueur++;
     }
+
+    return longueur;
 }
