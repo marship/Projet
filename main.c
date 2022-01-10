@@ -9,6 +9,7 @@
 #include "lecture_reimplantation.h"
 #include "lecture_section.h"
 #include "string_table.h"
+#include "section_sans_rel.h"
 
 
 void usage(char *name)
@@ -22,6 +23,7 @@ void usage(char *name)
 			"  -S --section-header    Afficher l'en-tête des sections\n"
             "  -s --table-symbole     Afficher la table des symboles\n"
 			"  -r --relocs            Afficher les réadressages (si présents)\n"
+			"  -p --relocs            Afficher les réadressages (si présents)\n"
             "  -H --help              Afficher l'aide-mémoire\n",
             name);
 }
@@ -30,6 +32,7 @@ int main(int argc, char **argv)
 {
 
 	int opt;
+	uint32_t i = 0;
 	char *nom_fichier = NULL;
 	Elf32_Ehdr ehdr;
 	Elf32_Shdr *shdr;
@@ -49,12 +52,13 @@ int main(int argc, char **argv)
         { "section-header ", required_argument, NULL, 'S' },
 		{ "table-symbole", required_argument, NULL, 's' },
 		{ "relocs", required_argument, NULL, 'r'},
+		{ "partie", required_argument, NULL, 'p'},
 		{ "help", no_argument, NULL, 'H' },
 		{ NULL, 0, NULL, 0 }
 	};
 
 
-	while ((opt = getopt_long(argc, argv, "h:S:s:r:H", longopts, NULL)) != -1) {
+	while ((opt = getopt_long(argc, argv, "h:S:s:r:p:H", longopts, NULL)) != -1) {
 		nom_fichier = optarg;
 		ehdr = lire_entete(nom_fichier);
 		shdr = lire_section(nom_fichier, ehdr);
@@ -77,6 +81,14 @@ int main(int argc, char **argv)
             break;
 		case 'r':
             afficher_relocations(reloc, ehdr, shdr, shstrtab, sym);
+			break;
+		case 'p':
+			i = nb_rel(ehdr, shdr);
+			shdr = maj_section(ehdr, shdr);
+			ehdr.e_shnum = ehdr.e_shnum - i;
+			ehdr.e_shstrndx = index_string(ehdr, shdr);
+			afficher_entete(ehdr);
+			afficher_section(shdr, ehdr, shstrtab);
 			break;
 		case 'H':
 			usage(argv[0]);
