@@ -169,10 +169,32 @@ typedef union {
 #define R_ARM_IRELATIVE          160
 
 
+/**
+ * @brief Fonction qui renvoie un tableau de Relocations correspondant aux ré-adressages à effectuer
+ *
+ * @param f (FILE *) Fichier ELF ouvert
+ * @param ehdr (Elf32_Ehdr) Structure contenant l'en-tête du fichier ELF
+ * @param shdr (Elf32_Shdr *) Tableau contenant les en-têtes des sections
+ * @return (Relocations) Renvoie un tableau de Relocations contenant des tableaux de Elf32_Rel ou Elf32_Rela
+ */
 Relocations *lire_relocations(FILE *f, Elf32_Ehdr ehdr, Elf32_Shdr *shdr);
 
+/**
+ * @brief Fonction qui libère la mémoire occupée par un tableau de Relocations
+ *
+ * @param reloc (Relocations *) Tableau de Relocations à libérer
+ * @param ehdr (Elf32_Ehdr) Structure contenant l'en-tête du fichier ELF
+ */
 void liberer_relocations(Relocations *reloc, Elf32_Ehdr ehdr);
 
+/**
+ * @brief Fonction affiche les ré-adressages à effectuer
+ *
+ * @param reloc (Relocations *) Tableau de Relocations contenant les ré-adressages à effectuer
+ * @param ehdr (Elf32_Ehdr) Structure contenant l'en-tête du fichier ELF
+ * @param shdr (Elf32_Shdr *) Tableau contenant les en-têtes des sections
+ * @param sym (Elf32_Sym *) Table des symboles
+ */
 void afficher_relocations(Relocations *reloc, Elf32_Ehdr ehdr, Elf32_Shdr *shdr, char *shstrtab, Elf32_Sym *sym);
 
 

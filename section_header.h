@@ -68,11 +68,10 @@ typedef struct
 
 
 /**
- * @brief Fonction qui renvoie une structure Elf32_Shdr correspondant aux entêtes de sections du fichier ELF passé en paramètre
+ * @brief Fonction qui renvoie un tableau de structures Elf32_Shdr correspondant aux entêtes de sections du fichier ELF passé en paramètre
  *
  * @param f (FILE *) Fichier ELF ouvert
  * @param ehdr (Elf32_Ehdr *) Structure contenant l'entête ELF
- * @param nom_fichier (char *) Nom du fichier ELF
  * @param taille (long) Taille (en octets) du fichier f
  * @return (Elf32_Shdr *) Renvoie un tableau de Elf32_Shdr correspondant aux entêtes des sections
  */

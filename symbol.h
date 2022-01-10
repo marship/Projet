@@ -60,10 +60,10 @@ typedef struct {
 /**
  * @brief Fonction qui crée une structure contenant la table des symboles
  *
- * @param nom_fichier (char *) Nom du fichier ELF
- * @param ehdr (Elf32_Ehdr *) Structure contenant l'entête pour obtenir le type de l'endian
- * @param shdr (Elf32_Shdr *) Structure contenant l'adresse pour le début de la section
- * @return (Elf32_Sym *) Renvoie une Structure correspondant à la table des symboles
+ * @param f (FILE *) Fichier ELF ouvert
+ * @param ehdr (Elf32_Ehdr) Structure contenant l'entête du fichier ELF
+ * @param shdr (Elf32_Shdr *) Tableau contenant les en-têtes des sections
+ * @return (Elf32_Sym *) Renvoie un tableau de structures correspondant à la table des symboles
  */
 Elf32_Sym *lire_symboles(FILE *f, Elf32_Ehdr ehdr, Elf32_Shdr *shdr);
 
@@ -71,7 +71,10 @@ Elf32_Sym *lire_symboles(FILE *f, Elf32_Ehdr ehdr, Elf32_Shdr *shdr);
  * @brief Fonction qui affiche la table des symboles corresondant à un fichier ELF
  *
  * @param sym (Elf32_Sym *) Structure contenant les symboles
- * @param nom_fichier (char *) Nom du fichier ELF
+ * @param ehdr (Elf32_Ehdr) Structure contenant l'entête du fichier ELF
+ * @param shdr (Elf32_Shdr *) Tableau contenant les en-têtes des sections
+ * @param shstrtab (char *) Table des chaines de caractères des en-têtes de sections
+ * @param strtab (char *) Table des chaines de caractères des symboles
  */
 void afficher_symboles(Elf32_Sym *sym, Elf32_Ehdr ehdr, Elf32_Shdr *shdr, char *shstrtab, char *strtab);
 
