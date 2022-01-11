@@ -42,7 +42,7 @@ Elf32_Sym *lire_symboles(FILE *f, Elf32_Ehdr ehdr, Elf32_Shdr *shdr)
     }
 
     // Deplacement au début des symboles
-    if (fseek(f, shdr[noSection].sh_addr + shdr[noSection].sh_offset, SEEK_SET) != 0)
+    if (fseek(f, shdr[noSection].sh_offset, SEEK_SET) != 0)
     {
         fprintf(stderr,
                 "ERREUR: La lecture de %d octets va au delà de la fin du fichier pour la table des symboles\n",

@@ -24,7 +24,7 @@ Relocations *lire_relocations(FILE *f, Elf32_Ehdr ehdr, Elf32_Shdr *shdr) {
 
     for (int i = 0; i < ehdr.e_shnum; i++) {
         if (shdr[i].sh_type == SHT_REL || shdr[i].sh_type == SHT_RELA) {
-            if (fseek(f, shdr[i].sh_addr + shdr[i].sh_offset, SEEK_SET) != 0) {
+            if (fseek(f, shdr[i].sh_offset, SEEK_SET) != 0) {
                 fprintf(stderr,
                         "ERREUR: La lecture de %d octets va au delà de la fin du fichier pour les ré-adressages\n",
                         shdr[i].sh_size);

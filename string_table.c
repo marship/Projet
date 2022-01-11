@@ -38,7 +38,7 @@ char *lire_strtab(FILE *f, Elf32_Shdr *shdr, Elf32_Ehdr ehdr) {
 
     for (Elf32_Half i = 0; i < ehdr.e_shnum; i++) {
         if (shdr[i].sh_type == SHT_STRTAB && i != ehdr.e_shstrndx) {
-            return lire_string_table(f, shdr[i].sh_addr + shdr[i].sh_offset, shdr[i].sh_size);
+            return lire_string_table(f, shdr[i].sh_offset, shdr[i].sh_size);
         }
     }
     return NULL;
@@ -52,7 +52,7 @@ char *lire_shstrtab(FILE *f, Elf32_Shdr *shdr, Elf32_Ehdr ehdr) {
     int i = ehdr.e_shstrndx;
 
     if (shdr[i].sh_type == SHT_STRTAB) {
-        return lire_string_table(f, shdr[i].sh_addr + shdr[i].sh_offset, shdr[i].sh_size);
+        return lire_string_table(f, shdr[i].sh_offset, shdr[i].sh_size);
     }
     return NULL;
 }

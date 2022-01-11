@@ -19,7 +19,7 @@ unsigned char *lire_section(FILE *f, Elf32_Shdr *shdr, int num)
         exit(EXIT_FAILURE);
     }
 
-    if (fseek(f, shdr[num].sh_addr + shdr[num].sh_offset, SEEK_SET) != 0) {
+    if (fseek(f, shdr[num].sh_offset, SEEK_SET) != 0) {
         fprintf(stderr,
                 "ERREUR: La lecture de %d octets va au delà de la fin du fichier pour la section\n",
                 shdr[num].sh_size);
@@ -67,7 +67,7 @@ void afficher_section(unsigned char *sect, char *shstrtab, Elf32_Shdr shdr)
                 j++;
             }
             j = 0;
-            printf ("  0x%.8x ", i);
+            printf ("  0x%.8x ", i + shdr.sh_addr);
         }
 
         printf("%.2x", sect[i]);
