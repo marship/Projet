@@ -160,28 +160,23 @@ void afficher_section_header(Elf32_Shdr *shdr, Elf32_Ehdr ehdr, char *shstrtab)
             printf("LOUSER+0        ");
             break;
 
-        case SHT_ARM_EXIDX:
-            printf("ARM_EXIDX       ");
-            break;
-
-        case SHT_ARM_PREEMPTMAP:
-            printf("ARM_PREEMPTMAP  ");
-            break;
-
-        case SHT_ARM_ATTRIBUTES:
-            printf("ARM_ATTRIBUTES  ");
-            break;
-
-        case SHT_ARM_DEBUGOVERLAY:
-            printf("ARM_DEBUGOVERLA ");
-            break;
-
-        case SHT_ARM_OVERLAYSECTION:
-            printf("ARM_OVERLAYSECT ");
-            break;
-
         default:
-            if (shdr[i].sh_type > SHT_LOPROC && shdr[i].sh_type < SHT_HIPROC) {
+            if (shdr[i].sh_type == SHT_ARM_EXIDX && ehdr.e_machine == EM_ARM) {
+                printf("ARM_EXIDX       ");
+            }
+            else if (shdr[i].sh_type == SHT_ARM_PREEMPTMAP && ehdr.e_machine == EM_ARM) {
+                printf("ARM_PREEMPTMAP  ");
+            }
+            else if (shdr[i].sh_type == SHT_ARM_ATTRIBUTES && ehdr.e_machine == EM_ARM) {
+                printf("ARM_ATTRIBUTES  ");
+            }
+            else if (shdr[i].sh_type == SHT_ARM_DEBUGOVERLAY && ehdr.e_machine == EM_ARM) {
+                printf("ARM_DEBUGOVERLA ");
+            }
+            else if (shdr[i].sh_type == SHT_ARM_OVERLAYSECTION && ehdr.e_machine == EM_ARM) {
+                printf("ARM_OVERLAYSECT ");
+            }
+            else if (shdr[i].sh_type > SHT_LOPROC && shdr[i].sh_type < SHT_HIPROC) {
                 Elf32_Word x = shdr[i].sh_type - SHT_LOPROC;
 
                 if (x <= 0xf) {
@@ -317,6 +312,9 @@ void afficher_section_header(Elf32_Shdr *shdr, Elf32_Ehdr ehdr, char *shstrtab)
     printf("Key to Flags:\n");
     printf("  W (write), A (alloc), X (execute), M (merge), S (strings), I (info),\n");
     printf("  L (link order), O (extra OS processing required), G (group), T (TLS),\n");
-    printf("  C (compressed), x (unknown), o (OS specific), E (exclude),\n");
-    printf("  y (purecode), p (processor specific)\n");
+    printf("  C (compressed), x (unknown), o (OS specific), E (exclude),\n  ");
+    if (ehdr.e_machine == EM_ARM) {
+        printf("y (purecode), ");
+    }
+    printf("p (processor specific)\n");
 }
