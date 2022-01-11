@@ -59,6 +59,7 @@ Elf32_Ehdr lire_elf_header(FILE *f, char *nom_fichier)
     else if (ehdr.e_shentsize > E_SHENTSIZE) {
         fprintf(stderr, "AVERTISSEMENT: Le champ e_shentsize dans l'en-tête ELF est plus grand "
                 "que la taille d'un en-tête de section ELF\n");
+        exit(EXIT_FAILURE);
     }
 
     if (ehdr.e_type == ET_EXEC && ehdr.e_phentsize < E_PHENTSIZE && ehdr.e_phentsize > 0) {
@@ -69,6 +70,14 @@ Elf32_Ehdr lire_elf_header(FILE *f, char *nom_fichier)
     else if (ehdr.e_type == ET_EXEC && ehdr.e_phentsize > E_PHENTSIZE) {
         fprintf(stderr, "AVERTISSEMENT: Le champ e_phentsize dans l'en-tête ELF est plus grand "
                 "que la taille d'un en-tête de programme ELF\n");
+        exit(EXIT_FAILURE);
+    }
+
+    if (ehdr.e_shnum == 0 && ehdr.e_shoff != 0) {
+        fprintf(stderr,
+                "AVERTISSEMENT: en-tête ELF peut-être endommagé – il a un offset non nul pour "
+                "l'en-tête de section mais pas d'en-tête de section\n");
+        exit(EXIT_FAILURE);
     }
 
     return ehdr;
