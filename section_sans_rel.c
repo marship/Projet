@@ -58,3 +58,40 @@ uint32_t index_string(Elf32_Ehdr ehdr, Elf32_Shdr *shdr){
         return i+1;
     }
 }
+
+Elf32_Sym *maj_ndx(Elf32_Sym *sym, Elf32_Shdr *shdr, Elf32_Ehdr ehdr){
+    // Recherche de la section des symboles
+    int noSection = 0;
+
+    while (noSection < ehdr.e_shnum && shdr[noSection].sh_type != SHT_SYMTAB)
+    {
+        noSection++;
+    }
+
+    if (noSection == ehdr.e_shnum)
+    {
+        fprintf(stderr, "Erreur: symbol table absente\n");
+        exit(EXIT_FAILURE);
+    }
+    
+    // Calcul du nombre de symboles
+    int nbSym = shdr[noSection].sh_size / shdr[noSection].sh_entsize;
+
+    int i = 1;
+    uint32_t j = 1;
+    uint32_t k = 0;
+    while(i != nbSym){
+        while(j != sym[i].st_shndx){
+            if( (shdr[j].sh_type == SHT_NOBITS) || (shdr[j].sh_type == SHT_RELA) || (shdr[j].sh_type == SHT_REL) ){
+                k++;
+            }
+            j++;
+        }
+        j = 1;
+        //printf("%d / %d\n", sym[i].st_shndx, k);
+        sym[i].st_shndx = sym[i].st_shndx - k;
+        k = 0;
+        i++;
+    }
+    return sym;
+}
