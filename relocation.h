@@ -194,8 +194,11 @@ void liberer_relocations(Relocations *reloc, Elf32_Ehdr ehdr);
  * @param ehdr (Elf32_Ehdr) Structure contenant l'en-tête du fichier ELF
  * @param shdr (Elf32_Shdr *) Tableau contenant les en-têtes des sections
  * @param sym (Elf32_Sym *) Table des symboles
+ * @param shstrtab (char *) Table des chaines de caractères des sections
+ * @param strtab (char *) Table des chaines de caractères des symboles
  */
-void afficher_relocations(Relocations *reloc, Elf32_Ehdr ehdr, Elf32_Shdr *shdr, char *shstrtab, Elf32_Sym *sym);
+void afficher_relocations(Relocations *reloc, Elf32_Ehdr ehdr, Elf32_Shdr *shdr, Elf32_Sym *sym,
+                          char *shstrtab, char *strtab);
 
 
 #endif

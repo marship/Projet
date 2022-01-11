@@ -91,7 +91,9 @@ void liberer_relocations(Relocations *reloc, Elf32_Ehdr ehdr) {
     free(reloc);
 }
 
-void afficher_relocations(Relocations *reloc, Elf32_Ehdr ehdr, Elf32_Shdr *shdr, char *shstrtab, Elf32_Sym *sym) {
+void afficher_relocations(Relocations *reloc, Elf32_Ehdr ehdr, Elf32_Shdr *shdr, Elf32_Sym *sym,
+                          char *shstrtab, char *strtab)
+{
     if (shdr == NULL || reloc == NULL || sym == NULL || shstrtab == NULL) {
         printf("\nThere are no relocations in this file.\n");
         return;
@@ -120,11 +122,16 @@ void afficher_relocations(Relocations *reloc, Elf32_Ehdr ehdr, Elf32_Shdr *shdr,
                     printf("%08x ", reloc[i].rel[j].r_info);
                     afficher_type_relocation(ELF32_R_TYPE(reloc[i].rel[j].r_info));
 
-                    int k = ELF32_R_SYM(reloc[i].rel[j].r_info);
+                    Elf32_Word k = ELF32_R_SYM(reloc[i].rel[j].r_info);
                     printf("%08x   ", sym[k].st_value);
 
-                    int l = sym[k].st_shndx;
-                    afficher_chaine(shstrtab, shdr[l].sh_name, 0);
+                    if (ELF32_ST_TYPE(sym[k].st_info) == STT_SECTION) {
+                        Elf32_Half l = sym[k].st_shndx;
+                        afficher_chaine(shstrtab, shdr[l].sh_name, 0);
+                    }
+                    else {
+                        afficher_chaine(strtab, sym[k].st_name, 0);
+                    }
                     printf("\n");
                 }
             }
@@ -136,11 +143,16 @@ void afficher_relocations(Relocations *reloc, Elf32_Ehdr ehdr, Elf32_Shdr *shdr,
                     printf("%08x ", reloc[i].rela[j].r_info);
                     afficher_type_relocation(ELF32_R_TYPE(reloc[i].rela[j].r_info));
 
-                    int k = ELF32_R_SYM(reloc[i].rela[j].r_info);
+                    Elf32_Word k = ELF32_R_SYM(reloc[i].rela[j].r_info);
                     printf("%08x   ", sym[k].st_value);
 
-                    int l = sym[k].st_shndx;
-                    afficher_chaine(shstrtab, shdr[l].sh_name, 0);
+                    if (ELF32_ST_TYPE(sym[k].st_info) == STT_SECTION) {
+                        Elf32_Half l = sym[k].st_shndx;
+                        afficher_chaine(shstrtab, shdr[l].sh_name, 0);
+                    }
+                    else {
+                        afficher_chaine(strtab, sym[k].st_name, 0);
+                    }
                     printf(" + %x\n", reloc[i].rela[j].r_addend);
                 }
             }

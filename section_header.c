@@ -5,10 +5,11 @@
 #include "string_table.h"
 #include "fonctions_utilitaires.h"
 
-#define REL_ENTSIZE 8
-#define RELA_ENTSIZE 12
+#define REL_ENTSIZE    8
+#define RELA_ENTSIZE   12
 #define SYMTAB_ENTSIZE 16
 #define DYNSYM_ENTSIZE 16
+#define GROUP_ENTSIZE  4
 
 
 Elf32_Shdr *lire_section_header(FILE *f, Elf32_Ehdr ehdr, long taille)
@@ -63,7 +64,8 @@ Elf32_Shdr *lire_section_header(FILE *f, Elf32_Ehdr ehdr, long taille)
         if ((shdr[i].sh_type == SHT_REL && shdr[i].sh_entsize != REL_ENTSIZE) ||
             (shdr[i].sh_type == SHT_RELA && shdr[i].sh_entsize != RELA_ENTSIZE) ||
             (shdr[i].sh_type == SHT_SYMTAB && shdr[i].sh_entsize != SYMTAB_ENTSIZE) ||
-            (shdr[i].sh_type == SHT_DYNSYM && shdr[i].sh_entsize != DYNSYM_ENTSIZE))
+            (shdr[i].sh_type == SHT_DYNSYM && shdr[i].sh_entsize != DYNSYM_ENTSIZE) ||
+            (shdr[i].sh_type == SHT_GROUP && shdr[i].sh_entsize != GROUP_ENTSIZE))
         {
             fprintf(stderr, "ERREUR: La section %d a une sh_entsize de %016x invalide\n",
                     i, shdr[i].sh_entsize);
@@ -87,11 +89,16 @@ void afficher_section_header(Elf32_Shdr *shdr, Elf32_Ehdr ehdr, char *shstrtab)
 
     for (int i = 0; i < ehdr.e_shnum; i++)
     {
-        if (i < 10) {
-            printf("  [ %d] ", i);
-        } else {
-            printf("  [%d] ", i);
+        if ((shdr[i].sh_type == SHT_GROUP || shdr[i].sh_type == SHT_SYMTAB_SHNDX) &&
+            shdr[shdr[i].sh_link].sh_type != SHT_SYMTAB)
+        {
+            fprintf(stderr,
+                    "AVERTISSEMENT: [%2d]: Le champ de liaison (%d) devrait indexer une section symtab.\n",
+                    i, shdr[i].sh_link);
+            exit(EXIT_FAILURE);
         }
+
+        printf("  [%2d] ", i);
 
         int len = afficher_chaine(shstrtab, shdr[i].sh_name, 17);
         for (int j = len; j < 18; j++) {
@@ -146,6 +153,26 @@ void afficher_section_header(Elf32_Shdr *shdr, Elf32_Ehdr ehdr, char *shstrtab)
         
         case SHT_DYNSYM:
             printf("DYNSYM          ");
+            break;
+
+        case SHT_INIT_ARRAY:
+            printf("INIT_ARRAY      ");
+            break;
+
+        case SHT_FINI_ARRAY:
+            printf("FINI_ARRAY      ");
+            break;
+
+        case SHT_PREINIT_ARRAY:
+            printf("PREINIT_ARRAY   ");
+            break;
+
+        case SHT_GROUP:
+            printf("GROUP           ");
+            break;
+
+        case SHT_SYMTAB_SHNDX:
+            printf("SYMTAB SECTION  ");
             break;
 
         case SHT_LOPROC:
@@ -286,27 +313,10 @@ void afficher_section_header(Elf32_Shdr *shdr, Elf32_Ehdr ehdr, char *shstrtab)
             printf("p");
         }
 
-        if (shdr[i].sh_link >= 100) {
-            printf("%d ", shdr[i].sh_link);
-        } else if (shdr[i].sh_link >= 10) {
-            printf(" %d ", shdr[i].sh_link);
-        } else {
-            printf("  %d ", shdr[i].sh_link);
-        }
-        
-        if (shdr[i].sh_info >= 100) {
-            printf("%d ", shdr[i].sh_info);
-        } else if (shdr[i].sh_info >= 10) {
-            printf(" %d ", shdr[i].sh_info);
-        } else {
-            printf("  %d ", shdr[i].sh_info);
-        }
+        printf("%3d ", shdr[i].sh_link);        
+        printf("%3d ", shdr[i].sh_info);
+        printf("%2d", shdr[i].sh_addralign);
 
-        if (shdr[i].sh_addralign >= 10) {
-            printf("%d", shdr[i].sh_addralign);
-        } else {
-            printf(" %d", shdr[i].sh_addralign);
-        }
         printf("\n");
     }
     printf("Key to Flags:\n");

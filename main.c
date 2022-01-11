@@ -153,7 +153,7 @@ int main(int argc, char **argv)
             }
 
             if (opt_r) {
-                afficher_relocations(reloc, ehdr, shdr, shstrtab, sym);
+                afficher_relocations(reloc, ehdr, shdr, sym, shstrtab, strtab);
             }
 
             if (opt_s) {
