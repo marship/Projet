@@ -42,13 +42,16 @@ do
         exit 0
 
     elif [ $arg = "-m" ] || [ $arg = "--main" ] || \
-         [ $arg = "-a" ] || [ $arg = "--all" ] || \
          [ $arg = "-h" ] || [ $arg = "--file-header" ] || \
          [ $arg = "-S" ] || [ $arg = "--section-headers" ] || \
          [ $arg = "-s" ] || [ $arg = "--symbols" ] || \
          [ $arg = "-r" ] || [ $arg = "--relocs" ]
     then
         options+=("$arg")
+
+    elif [[ $arg = "-a" || $arg = "--all" ]]
+    then
+        options+=("-Sshr")
 
     elif [[ $arg = "-x" || $arg = "--hex-dump" ]]
     then
@@ -91,7 +94,7 @@ then
     exit 1
 elif [ $# -eq 1 ]
 then
-    options=("-m" "-h" "-S" "-s" "-r" "--hex-dump=1" "--hex-dump=.strtab" "-a")
+    options=("-m" "-h" "-S" "-s" "-r" "--hex-dump=1" "--hex-dump=.strtab" "-Sshr")
 fi
 
 # --------------------------------------------------------------------------------
@@ -104,7 +107,7 @@ do
         afficher_categorie
         effectuer_tests_main
     else
-        if [[ $opt = "-a" || $opt = "--all" ]]
+        if [ $opt = "-Sshr" ]
         then
             CATEGORIE="Tests d'affichage complet"
         elif [[ $opt = "-h" || $opt = "--file-header" ]]
