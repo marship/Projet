@@ -1,36 +1,25 @@
 #!/bin/bash
 
 
-recuperer_option() {
-    if [ $1 = "-a" ] || [ $1 = "--all" ]
-    then
-        AFFICHER=2
-    elif [ $1 = "-f" ] || [ $1 = "--failed" ]
-    then
-        AFFICHER=1
-    elif [ $1 = "-m" ] || [ $1 = "--minimal" ]
-    then
-        AFFICHER=0
-    elif [ $1 = "-h" ] || [ $1 = "--help" ]
-    then
-        usage
-        exit 0
-    else
-        usage
-        exit 1
-    fi
-}
-
-
 usage() {
     echo "Usage:"
-    echo "  $0 <options>"
+    echo "  $0 <command>            Lancer tous les tests"
+    echo "  $0 <command> <options>  Lancer uniquement les tests correspondant aux options données"
+    echo ""
+    echo "Commands:"
+    echo "  all        Activer tous les affichages"
+    echo "  failed     Afficher uniquement les tests qui échouent"
+    echo "  minimal    Afficher uniquement si les tests réussissent ou échouent"
+    echo "  help       Afficher ce message d'aide"
     echo ""
     echo "Options:"
-    echo "  -a --all        Activer tous les affichages"
-    echo "  -f --failed     Afficher uniquement les tests qui échouent"
-    echo "  -m --minimal    Afficher uniquement si les tests réussissent ou échouent"
-    echo "  -h --help       Afficher ce message d'aide"
+    echo "  -m --main                  Tester le main"
+    echo "  -a --all                   Équivalent à: -h -S -s -r"
+    echo "  -h --file-header           Tester l'affichage de l'en-tête du fichier ELF"
+    echo "  -S --section-headers       Tester l'affichage des en-têtes des sections"
+    echo "  -s --symbols               Tester l'affichage de la table des symboles"
+    echo "  -r --relocs                Tester l'affichage des réadressages"
+    echo "  -x --hex-dump=<numéro|nom> Tester l'affichage du contenu de la section <numéro|nom>"
 }
 
 
@@ -42,7 +31,7 @@ usage() {
 # $6 = ATTENDU_2
 afficher_test() {
     # On affiche en fonction de l'option donnée en argument
-    if [ $AFFICHER -eq 2 ]
+    if [ $AFFICHER -eq 3 ]
     then
         printf "${CYAN}$1 : ${RESET}"
 
@@ -70,7 +59,7 @@ afficher_test() {
 
         printf "\n"
 
-    elif [ $AFFICHER -eq 1 ]
+    elif [ $AFFICHER -eq 2 ]
     then
         # Si le test a échoué
         if [ $2 -eq 1 ]
@@ -107,7 +96,7 @@ afficher_test() {
 
 
 afficher_categorie() {
-    if [ $AFFICHER -eq 1 ]
+    if [ $AFFICHER -eq 2 ]
     then
         CATEGORIE_AFFICHEE=0
     else
@@ -118,7 +107,7 @@ afficher_categorie() {
 
 
 afficher_separateur() {
-    if [ $AFFICHER -eq 0 ]
+    if [ $AFFICHER -eq 1 ]
     then
         printf "\n"
     fi
@@ -127,4 +116,94 @@ afficher_separateur() {
     then
         printf "${BLACK}--------------------------------------------------${RESET}\n\n"
     fi
+}
+
+
+effectuer_tests() {
+    for file in ${PROJET}/tests/fichiers/*
+    do
+        # On récupère l'affichage de notre programme
+        OBTENU_STDOUT=$(${PROJET}/main ${opt} ${file} 2>/dev/null)
+        OBTENU_STDERR=$(${PROJET}/main ${opt} ${file} 2>&1 >/dev/null)
+
+        # On stocke l'affichage que l'on souhaite obtenir
+        ATTENDU_STDOUT=$(arm-none-eabi-readelf ${opt} ${file} 2>/dev/null)
+        ATTENDU_STDERR=$(grep '^readelf:\ ' <(readelf ${opt} ${file} 2>&1 >/dev/null))
+        ATTENDU_STDERR="${ATTENDU_STDERR//readelf: /}"
+        IFS=$'\n' read -d '' -a ATTENDU_STDERR <<< "$ATTENDU_STDERR"
+
+        # On regarde si les stdout et stderr sont identiques
+        diff <(echo "${OBTENU_STDOUT}") <(echo "${ATTENDU_STDOUT}") &>/dev/null
+        DIFF_OUT=$?
+        diff <(echo "${OBTENU_STDERR}") <(echo "${ATTENDU_STDERR[@]}") &>/dev/null
+        DIFF_ERR=$?
+
+        # Si les stdout et stderr sont identiques
+        if [ $DIFF_OUT -eq 0 ] && [ $DIFF_ERR -eq 0 ]
+        then
+            afficher_test "${file##*/}" "$DIFF_OUT" "${OBTENU_STDOUT}" "${ATTENDU_STDOUT}" \
+                          "${OBTENU_STDERR}" "${ATTENDU_STDERR[@]}"
+
+        # Si les stderr sont identiques mais pas les stdout
+        elif [ $DIFF_ERR -eq 0 ]
+        then
+            # Si les stderr sont vides
+            if [ -z "${OBTENU_STDERR}" ]
+            then
+                afficher_test "${file##*/}" "$DIFF_OUT" "${OBTENU_STDOUT}" "${ATTENDU_STDOUT}" \
+                              "${OBTENU_STDERR}" "${ATTENDU_STDERR[@]}"
+            # Sinon les stderr ne sont pas vides
+            else
+                afficher_test "${file##*/}" "$DIFF_ERR" "${OBTENU_STDOUT}" "${ATTENDU_STDOUT}" \
+                              "${OBTENU_STDERR}" "${ATTENDU_STDERR[@]}"
+            fi
+
+        # Sinon les stderr sont différentes
+        else
+            i=0
+
+            # On compare chaque stderr attendue avec la stderr obtenue
+            while [ $i -lt ${#ATTENDU_STDERR[@]} ] && [ $DIFF_ERR -ne 0 ]
+            do
+                diff <(echo "${OBTENU_STDERR}") <(echo "${ATTENDU_STDERR[$i]}") &>/dev/null
+                DIFF_ERR=$?
+                i=$(($i+1))
+            done
+
+            afficher_test "${file##*/}" "$DIFF_ERR" "${OBTENU_STDOUT}" "${ATTENDU_STDOUT}" \
+                          "${OBTENU_STDERR}" "${ATTENDU_STDERR[@]}"
+
+        fi
+    done
+}
+
+
+effectuer_tests_main() {
+    OBTENU=$(${PROJET}/main 2>&1)
+    diff <(echo "${OBTENU}") <(echo "${USAGE_MAIN}") &>/dev/null
+    afficher_test "test aucun argument" "$?" "${OBTENU}" "${USAGE_MAIN}"
+
+    OBTENU=$(${PROJET}/main ${PROJET}/tests/corrects/example1 2>&1)
+    diff <(echo "${OBTENU}") <(echo "${USAGE_MAIN}") &>/dev/null
+    afficher_test "test aucune option" "$?" "${OBTENU}" "${USAGE_MAIN}"
+
+    OBTENU=$(${PROJET}/main -a 2>&1)
+    diff <(echo "${OBTENU}") <(echo "${USAGE_MAIN}") &>/dev/null
+    afficher_test "test aucun fichier" "$?" "${OBTENU}" "${USAGE_MAIN}"
+
+    OBTENU=$(${PROJET}/main -H 2>&1)
+    diff <(echo "${OBTENU}") <(echo "${USAGE_MAIN}") &>/dev/null
+    afficher_test "test affichage aide" "$?" "${OBTENU}" "${USAGE_MAIN}"
+
+    OBTENU=$(${PROJET}/main -q 2>&1)
+    diff <(echo "${OBTENU}") <(echo "${OPTION_INVALIDE}${USAGE_MAIN}") &>/dev/null
+    afficher_test "test option invalide" "$?" "${OBTENU}" "${OPTION_INVALIDE}${USAGE_MAIN}"
+
+    OBTENU=$(${PROJET}/main -a aaa 2>&1)
+    diff <(echo "${OBTENU}") <(echo "${FICHIER_INEXISTANT}") &>/dev/null
+    afficher_test "test fichier inexistant" "$?" "${OBTENU}" "${FICHIER_INEXISTANT}"
+
+    OBTENU=$(${PROJET}/main ${PROJET}/tests/corrects/example1 -x 2>&1)
+    diff <(echo "${OBTENU}") <(echo "${OPTION_SANS_ARGUMENT}${USAGE_MAIN}") &>/dev/null
+    afficher_test "test option -x sans argument" "$?" "${OBTENU}" "${OPTION_SANS_ARGUMENT}${USAGE_MAIN}"
 }

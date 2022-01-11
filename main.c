@@ -180,13 +180,13 @@ int main(int argc, char **argv)
                         }
                         if (num_x[i] == 0) {
                             fprintf(stderr, "AVERTISSEMENT: La section « %s » n'a pas été vidangée "
-                                    "parce qu'inexistante !\n", arg_x[i]);
+                                    "parce qu'inexistante !\n", arg_x[i]);
                             exit(EXIT_FAILURE);
                         }
                     }
                     else if (num_x[i] >= ehdr.e_shnum) {
                         fprintf(stderr,
-                                "AVERTISSEMENT: La section %ld n'a pas été vidangée parce qu'inexistante !\n",
+                                "AVERTISSEMENT: La section %ld n'a pas été vidangée parce qu'inexistante !\n",
                                 num_x[i]);
                         exit(EXIT_FAILURE);
                     }
