@@ -5,6 +5,11 @@
 #include "string_table.h"
 #include "fonctions_utilitaires.h"
 
+#define REL_ENTSIZE 8
+#define RELA_ENTSIZE 12
+#define SYMTAB_ENTSIZE 16
+#define DYNSYM_ENTSIZE 16
+
 
 Elf32_Shdr *lire_section_header(FILE *f, Elf32_Ehdr ehdr, long taille)
 {
@@ -46,6 +51,22 @@ Elf32_Shdr *lire_section_header(FILE *f, Elf32_Ehdr ehdr, long taille)
             fprintf(stderr,
                     "ERREUR: La lecture de %d octets va au delà de la fin du fichier pour En-têtes de section\n",
                     ehdr.e_shnum * ehdr.e_shentsize);
+            exit(EXIT_FAILURE);
+        }
+
+        if (shdr[i].sh_link >= ehdr.e_shnum) {
+            fprintf(stderr, "AVERTISSEMENT: La section %d a une valeur sh_link %d hors limite\n",
+                    i, shdr[i].sh_link);
+            exit(EXIT_FAILURE);
+        }
+
+        if ((shdr[i].sh_type == SHT_REL && shdr[i].sh_entsize != REL_ENTSIZE) ||
+            (shdr[i].sh_type == SHT_RELA && shdr[i].sh_entsize != RELA_ENTSIZE) ||
+            (shdr[i].sh_type == SHT_SYMTAB && shdr[i].sh_entsize != SYMTAB_ENTSIZE) ||
+            (shdr[i].sh_type == SHT_DYNSYM && shdr[i].sh_entsize != DYNSYM_ENTSIZE))
+        {
+            fprintf(stderr, "ERREUR: La section %d a une sh_entsize de %016x invalide\n",
+                    i, shdr[i].sh_entsize);
             exit(EXIT_FAILURE);
         }
     }

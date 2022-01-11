@@ -18,6 +18,7 @@ void usage(char *name)
             "  %s <options> fichiers-elf\n"
             "\n"
             "Options:\n"
+            "  -a --all                   Équivalent à: -h -S -s -r\n"
             "  -h --file-header           Afficher l'en-tête du fichier ELF\n"
             "  -S --section-headers       Afficher les en-têtes des sections\n"
             "  -s --symbols               Afficher la table des symboles\n"
@@ -31,6 +32,7 @@ int main(int argc, char **argv)
 {
     int opt;
     int opt_h = 0, opt_S = 0, opt_s = 0, opt_r = 0, opt_x = 0;
+    int nb_fichiers = 0;
 
     if (argc < 2)
     {
@@ -41,11 +43,12 @@ int main(int argc, char **argv)
     char **arg_x = malloc((argc - 1) * sizeof(char *));
 
     if (arg_x == NULL) {
-        fprintf(stderr, "ERREUR: Impossible d'allouer de la mémoire pour la section\n");
+        fprintf(stderr, "ERREUR: Impossible d'allouer de la mémoire\n");
         return EXIT_FAILURE;
     }
 
     struct option longopts[] = {
+        { "all", no_argument, NULL, 'a' },
         { "file-header", no_argument, NULL, 'h' },
         { "section-headers", no_argument, NULL, 'S' },
         { "symbols", no_argument, NULL, 's' },
@@ -55,8 +58,15 @@ int main(int argc, char **argv)
         { NULL, 0, NULL, 0 }
     };
 
-    while ((opt = getopt_long(argc, argv, "hSsrx:H", longopts, NULL)) != -1) {
+    while ((opt = getopt_long(argc, argv, "ahSsrx:H", longopts, NULL)) != -1) {
         switch (opt) {
+        case 'a':
+            opt_h = 1;
+            opt_S = 1;
+            opt_s = 1;
+            opt_r = 1;
+            break;
+
         case 'h':
             opt_h = 1;
             break;
@@ -79,7 +89,7 @@ int main(int argc, char **argv)
             arg_x[opt_x-1] = malloc(strlen(optarg) * sizeof(char));
 
             if (arg_x[opt_x-1] == NULL) {
-                fprintf(stderr, "ERREUR: Impossible d'allouer de la mémoire pour la section\n");
+                fprintf(stderr, "ERREUR: Impossible d'allouer de la mémoire\n");
                 return EXIT_FAILURE;
             }
 
@@ -96,9 +106,15 @@ int main(int argc, char **argv)
         }
     }
 
+    if ((!opt_h && !opt_S && !opt_s && !opt_r && !opt_x)) {
+        usage(argv[0]);
+        return EXIT_FAILURE;
+    }
+
     for (int i = 1; i < argc; i++) {
         if (argv[i][0] != '-' && strcmp(argv[i-1], "-x") != 0 && strcmp(argv[i-1], "--hex-dump") != 0) {
             char *nom_fichier = argv[i];
+            nb_fichiers++;
 
             // Ouverture du fichier
             FILE *f = fopen(nom_fichier, "rb");
@@ -203,6 +219,11 @@ int main(int argc, char **argv)
             }
             fclose(f);
         }
+    }
+
+    if (nb_fichiers == 0) {
+        usage(argv[0]);
+        return EXIT_FAILURE;
     }
 
     for (int i = 0; i < opt_x; i++) {
