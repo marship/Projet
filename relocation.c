@@ -20,6 +20,8 @@ Relocations *lire_relocations(FILE *f, Elf32_Ehdr ehdr, Elf32_Shdr *shdr) {
         exit(EXIT_FAILURE);
     }
 
+    int nb_reloc = 0;
+
     for (int i = 0; i < ehdr.e_shnum; i++) {
         if (shdr[i].sh_type == SHT_REL || shdr[i].sh_type == SHT_RELA) {
             if (fseek(f, shdr[i].sh_addr + shdr[i].sh_offset, SEEK_SET) != 0) {
@@ -29,6 +31,7 @@ Relocations *lire_relocations(FILE *f, Elf32_Ehdr ehdr, Elf32_Shdr *shdr) {
                 exit(EXIT_FAILURE);
             }
 
+            nb_reloc++;
             int entries = shdr[i].sh_size / shdr[i].sh_entsize;
 
             if (shdr[i].sh_type == SHT_REL) {
@@ -62,6 +65,12 @@ Relocations *lire_relocations(FILE *f, Elf32_Ehdr ehdr, Elf32_Shdr *shdr) {
             }
         }
     }
+
+    if (nb_reloc == 0) {
+        liberer_relocations(reloc, ehdr);
+        return NULL;
+    }
+
     return reloc;
 }
 
