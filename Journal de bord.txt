@@ -46,3 +46,14 @@ WEEK-END
 	Le but du week-end était de boucler correctement la Partie 1 , comprenant les 5 étapes. Tout le monde travaille donc de façon a faire avancer toutes les parties.
    L'étape 3 est complètement terminée d'un point de vue pratique, il reste a implémenter la lecture de la section en paramètre et non dans le code en dur.
    A la fin de la semaine, la Partie 1 est globalement complète, encore quelques détails sur les étapes 2 et 4 deumeurent mais seront réglés prochainement.
+
+JOUR6/Lundi
+
+	Le travail est divisé en 2 groupes : un groupe essayant de réaliser les étapes 6 et 7, et un second se concentrat sur l'étape 8, puisque nous avions identifié la partie 	 ARM comme notre gros point faible de ce projet.
+	La partie 6 avance bien, et est quasiment terminée à la fin de la journée. On commence également à réfléchir à la réalisation de la partie 7.
+
+JOUR 7/Mardi
+
+	On parvient à terminer a partie 6. En se penchant sur la parie 7, on remarque que les différents memebres du groupe ne comprennent pas l'énoncé de la même manière, et 		cela n'aide pas à avancer.
+	Dans le même temps, on commence à se mettre en place pour la soutenance de vendredi ainsi que pour le Mode d'emploi de notre programme.
+	Cependant, les parties 7 et 8 n'avançent que très peu par manque de compréhension.
