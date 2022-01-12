@@ -60,7 +60,7 @@ int main(int argc, char **argv)
         { NULL, 0, NULL, 0 }
     };
 
-    while ((opt = getopt_long(argc, argv, "ahSsrx:H", longopts, NULL)) != -1) {
+    while ((opt = getopt_long(argc, argv, "ahSsrx:pH", longopts, NULL)) != -1) {
         switch (opt) {
         case 'a':
             opt_a++;
@@ -114,10 +114,10 @@ int main(int argc, char **argv)
         return EXIT_FAILURE;
     }
 
-    int nb_fichiers = argc - 1 - opt_h - opt_S - opt_s - opt_r - opt_a - opt_p - 2 * opt_x;
+    int nb_fichiers = 0;
 
     for (int i = 1; i < argc; i++) {
-        if (strncmp(argv[i], "--hex-dump=", 11) == 0) {
+        if (argv[i][0] != '-' && strcmp(argv[i-1], "-x") != 0 && strcmp(argv[i-1], "--hex-dump") != 0) {
             nb_fichiers++;
         }
     }
@@ -228,6 +228,10 @@ int main(int argc, char **argv)
 			    shdr = maj_section(ehdr, shdr);
 			    ehdr.e_shnum = ehdr.e_shnum - j;
 			    ehdr.e_shstrndx = index_string(ehdr, shdr);
+
+                if (opt_h || opt_S || opt_s || opt_r || opt_a || opt_x) {
+                    printf("\n");
+                }
 			    afficher_elf_header(ehdr);
 			    afficher_section_header(shdr, ehdr, shstrtab);
             }
