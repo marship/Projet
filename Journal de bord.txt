@@ -57,3 +57,14 @@ JOUR 7/Mardi
 	On parvient à terminer a partie 6. En se penchant sur la parie 7, on remarque que les différents memebres du groupe ne comprennent pas l'énoncé de la même manière, et 		cela n'aide pas à avancer.
 	Dans le même temps, on commence à se mettre en place pour la soutenance de vendredi ainsi que pour le Mode d'emploi de notre programme.
 	Cependant, les parties 7 et 8 n'avançent que très peu par manque de compréhension.
+
+JOUR8/Mercredi
+
+	Tout le monde essaye d'avancer tant bien que mal sur les parties 7 et 8. Après concertation, on décide de laisser tomber l'avancement dans les étapes pour se concentrer 	 sur la soutenance ainsi que sur des détails, comme l'automatiastion des tests.
+	Le Mode d'emploi est donc quasiment terminé, les tests sont automatisés.
+	Le but de la journée de demain sera de préparer au mieux possible la soutenance, en réalisant une beau diaporama et de bien répartir le temps de parole.
+
+JOUR9/Jeudi 
+
+	Pour cette dernière matinée, toutes les informations sont mises en commun afin de préparer la soutenance à 5, puisque Mathis ne pourra pas participer.
+	Nous sommes finalement assez contents d'en être arrivés à ce stade, et il nous aurait fallut plus de temps pour bien comprendre les étapes suivantes et pouvoir proposer 	 quelque chose de concret.
