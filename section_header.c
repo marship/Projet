@@ -79,7 +79,7 @@ Elf32_Shdr *lire_section_header(FILE *f, Elf32_Ehdr ehdr, long taille)
 
 void afficher_section_header(Elf32_Shdr *shdr, Elf32_Ehdr ehdr, char *shstrtab)
 {
-    if (shdr == NULL || shstrtab == NULL) {
+    if (shdr == NULL) {
         printf("\nThere are no sections in this file.\n");
         return;
     }
@@ -89,12 +89,37 @@ void afficher_section_header(Elf32_Shdr *shdr, Elf32_Ehdr ehdr, char *shstrtab)
 
     for (int i = 0; i < ehdr.e_shnum; i++)
     {
-        if ((shdr[i].sh_type == SHT_GROUP || shdr[i].sh_type == SHT_SYMTAB_SHNDX) &&
-            shdr[shdr[i].sh_link].sh_type != SHT_SYMTAB)
+        Elf32_Word type = shdr[i].sh_type;
+        Elf32_Word link = shdr[i].sh_link;
+        Elf32_Word info = shdr[i].sh_info;
+
+        if ((type == SHT_REL || type == SHT_RELA || type == SHT_GROUP || type == SHT_SYMTAB_SHNDX || type == SHT_HASH)
+            && shdr[link].sh_type != SHT_SYMTAB)
         {
             fprintf(stderr,
                     "AVERTISSEMENT: [%2d]: Le champ de liaison (%d) devrait indexer une section symtab.\n",
-                    i, shdr[i].sh_link);
+                    i, link);
+            exit(EXIT_FAILURE);
+        }
+
+        if ((type == SHT_DYNAMIC || type == SHT_SYMTAB || type == SHT_DYNSYM) && shdr[link].sh_type != SHT_STRTAB) {
+            fprintf(stderr,
+                    "AVERTISSEMENT: [%2d]: Le champ de liaison (%d) devrait indexer une section de chaînes.\n",
+                    i, link);
+            exit(EXIT_FAILURE);
+        }
+
+        if ((type == SHT_REL || type == SHT_RELA) && shdr[info].sh_type != SHT_PROGBITS) {
+            fprintf(stderr,
+                    "AVERTISSEMENT: [%2d]: Le champ d'info (%d) devrait indexer une section réadressable.\n",
+                    i, info);
+            exit(EXIT_FAILURE);
+        }
+
+        if ((type == SHT_DYNAMIC || type == SHT_HASH || type == SHT_SYMTAB_SHNDX) && info != 0) {
+            fprintf(stderr,
+                    "AVERTISSEMENT: [%2d]: Valeur (%d) inattendue dans le champ d'info.\n",
+                    i, info);
             exit(EXIT_FAILURE);
         }
 
@@ -105,7 +130,7 @@ void afficher_section_header(Elf32_Shdr *shdr, Elf32_Ehdr ehdr, char *shstrtab)
             printf(" ");
         }
 
-        switch (shdr[i].sh_type)
+        switch (type)
         {
         case SHT_NULL:
             printf("NULL            ");
@@ -188,23 +213,23 @@ void afficher_section_header(Elf32_Shdr *shdr, Elf32_Ehdr ehdr, char *shstrtab)
             break;
 
         default:
-            if (shdr[i].sh_type == SHT_ARM_EXIDX && ehdr.e_machine == EM_ARM) {
+            if (type == SHT_ARM_EXIDX && ehdr.e_machine == EM_ARM) {
                 printf("ARM_EXIDX       ");
             }
-            else if (shdr[i].sh_type == SHT_ARM_PREEMPTMAP && ehdr.e_machine == EM_ARM) {
+            else if (type == SHT_ARM_PREEMPTMAP && ehdr.e_machine == EM_ARM) {
                 printf("ARM_PREEMPTMAP  ");
             }
-            else if (shdr[i].sh_type == SHT_ARM_ATTRIBUTES && ehdr.e_machine == EM_ARM) {
+            else if (type == SHT_ARM_ATTRIBUTES && ehdr.e_machine == EM_ARM) {
                 printf("ARM_ATTRIBUTES  ");
             }
-            else if (shdr[i].sh_type == SHT_ARM_DEBUGOVERLAY && ehdr.e_machine == EM_ARM) {
+            else if (type == SHT_ARM_DEBUGOVERLAY && ehdr.e_machine == EM_ARM) {
                 printf("ARM_DEBUGOVERLA ");
             }
-            else if (shdr[i].sh_type == SHT_ARM_OVERLAYSECTION && ehdr.e_machine == EM_ARM) {
+            else if (type == SHT_ARM_OVERLAYSECTION && ehdr.e_machine == EM_ARM) {
                 printf("ARM_OVERLAYSECT ");
             }
-            else if (shdr[i].sh_type > SHT_LOPROC && shdr[i].sh_type < SHT_HIPROC) {
-                Elf32_Word x = shdr[i].sh_type - SHT_LOPROC;
+            else if (type > SHT_LOPROC && type < SHT_HIPROC) {
+                Elf32_Word x = type - SHT_LOPROC;
 
                 if (x <= 0xf) {
                     printf("LOPROC+0x%x      ", x);
@@ -224,8 +249,8 @@ void afficher_section_header(Elf32_Shdr *shdr, Elf32_Ehdr ehdr, char *shstrtab)
                     printf("LOPROC+0x%x ", x >> 8);
                 }
             }
-            else if (shdr[i].sh_type > SHT_LOUSER && shdr[i].sh_type <= SHT_HIUSER) {
-                Elf32_Word x = shdr[i].sh_type - SHT_LOUSER;
+            else if (type > SHT_LOUSER && type <= SHT_HIUSER) {
+                Elf32_Word x = type - SHT_LOUSER;
 
                 if (x <= 0xf) {
                     printf("LOUSER+0x%x      ", x);
@@ -246,7 +271,7 @@ void afficher_section_header(Elf32_Shdr *shdr, Elf32_Ehdr ehdr, char *shstrtab)
                 }
             }
             else {
-                printf("%08x: <unkn ", shdr[i].sh_type);
+                printf("%08x: <unkn ", type);
             }
             break;
         }
@@ -313,8 +338,8 @@ void afficher_section_header(Elf32_Shdr *shdr, Elf32_Ehdr ehdr, char *shstrtab)
             printf("p");
         }
 
-        printf("%3d ", shdr[i].sh_link);        
-        printf("%3d ", shdr[i].sh_info);
+        printf("%3d ", link);        
+        printf("%3d ", info);
         printf("%2d", shdr[i].sh_addralign);
 
         printf("\n");

@@ -38,11 +38,18 @@ unsigned char *lire_section(FILE *f, Elf32_Shdr *shdr, int num)
 }
 
 
-void afficher_section(unsigned char *sect, char *shstrtab, Elf32_Shdr shdr)
+void afficher_section(unsigned char *sect, char *shstrtab, Elf32_Shdr *shdr, uint32_t index, Elf32_Half shnum)
 {
-    if (sect == NULL || shstrtab == NULL) {
+    if (sect == NULL || shdr == NULL) {
         fprintf(stderr, "AVERTISSEMENT: La section n'a pas été vidangée parce qu'inexistante !");
         exit(EXIT_FAILURE);
+    }
+
+    if (shdr[index].sh_size == 0) {
+        printf("Section '");
+        afficher_chaine(shstrtab, shdr[index].sh_name, 0);
+        printf("' has no data to dump.\n");
+        return;
     }
 
     uint32_t i = 0;
@@ -50,10 +57,17 @@ void afficher_section(unsigned char *sect, char *shstrtab, Elf32_Shdr shdr)
     unsigned char ligne[17];
 
     printf("\nHex dump of section '");
-    afficher_chaine(shstrtab, shdr.sh_name, 0);
+    afficher_chaine(shstrtab, shdr[index].sh_name, 0);
     printf("':\n");
 
-    while (i < shdr.sh_size) {
+    for (uint32_t k = 0; k < shnum; k++) {
+        if (shdr[k].sh_info == index && (shdr[k].sh_type == SHT_REL || shdr[k].sh_type == SHT_RELA)) {
+            printf(" NOTE: This section has relocations against it, but these have NOT been applied to this dump.\n");
+            break;
+        }
+    }
+
+    while (i < shdr[index].sh_size) {
         if (i % 4 == 0 && i != 0) {
             printf(" ");
         }
@@ -67,7 +81,7 @@ void afficher_section(unsigned char *sect, char *shstrtab, Elf32_Shdr shdr)
                 j++;
             }
             j = 0;
-            printf ("  0x%.8x ", i + shdr.sh_addr);
+            printf ("  0x%.8x ", i + shdr[index].sh_addr);
         }
 
         printf("%.2x", sect[i]);

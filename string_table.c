@@ -59,8 +59,7 @@ char *lire_shstrtab(FILE *f, Elf32_Shdr *shdr, Elf32_Ehdr ehdr) {
 
 int afficher_chaine(char *strtab, Elf32_Word index, int longueur_max) {
     if (strtab == NULL) {
-        fprintf(stderr, "ERREUR: string table absente\n");
-        exit(EXIT_FAILURE);
+        return 0;
     }
 
     int longueur = 0;

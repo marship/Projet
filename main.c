@@ -179,7 +179,7 @@ int main(int argc, char **argv)
                             }
                         }
                         if (num_x[i] == 0) {
-                            fprintf(stderr, "AVERTISSEMENT: La section « %s » n'a pas été vidangée "
+                            fprintf(stderr, "AVERTISSEMENT: La section « %s » n'a pas été vidangée "
                                     "parce qu'inexistante !\n", arg_x[i]);
                             exit(EXIT_FAILURE);
                         }
@@ -196,7 +196,7 @@ int main(int argc, char **argv)
                     for (int j = 0; j < opt_x; j++) {
                         if (num_x[j] == i) {
                             unsigned char *section = lire_section(f, shdr, i);
-                            afficher_section(section, shstrtab, shdr[i]);
+                            afficher_section(section, shstrtab, shdr, i, ehdr.e_shnum);
                             free(section);
                         }
                     }

@@ -72,7 +72,7 @@ Elf32_Sym *lire_symboles(FILE *f, Elf32_Ehdr ehdr, Elf32_Shdr *shdr)
 
 void afficher_symboles(Elf32_Sym *sym, Elf32_Ehdr ehdr, Elf32_Shdr *shdr, char *shstrtab, char *strtab)
 {
-    if (sym == NULL || shdr == NULL || shstrtab == NULL || strtab == NULL) {
+    if (sym == NULL || shdr == NULL) {
         printf("\nDynamic symbol information is not available for displaying symbols.\n");
         return;
     }

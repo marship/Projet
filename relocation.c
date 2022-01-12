@@ -94,13 +94,14 @@ void liberer_relocations(Relocations *reloc, Elf32_Ehdr ehdr) {
 void afficher_relocations(Relocations *reloc, Elf32_Ehdr ehdr, Elf32_Shdr *shdr, Elf32_Sym *sym,
                           char *shstrtab, char *strtab)
 {
-    if (shdr == NULL || reloc == NULL || sym == NULL || shstrtab == NULL) {
+    if (shdr == NULL || reloc == NULL || sym == NULL) {
         printf("\nThere are no relocations in this file.\n");
         return;
     }
 
     for (int i = 0; i < ehdr.e_shnum; i++) {
         if (shdr[i].sh_type == SHT_REL || shdr[i].sh_type == SHT_RELA) {
+
             int entries = shdr[i].sh_size / shdr[i].sh_entsize;
 
             printf("\nRelocation section '");
@@ -114,46 +115,48 @@ void afficher_relocations(Relocations *reloc, Elf32_Ehdr ehdr, Elf32_Shdr *shdr,
                 printf("entries:\n");
             }
 
-            if (shdr[i].sh_type == SHT_REL) {
-                printf(" Offset     Info    Type            Sym.Value  Sym. Name\n");
+            if (shdr[shdr[i].sh_link].sh_type == SHT_SYMTAB) {
+                if (shdr[i].sh_type == SHT_REL) {
+                    printf(" Offset     Info    Type            Sym.Value  Sym. Name\n");
 
-                for (int j = 0; j < entries; j++) {
-                    printf("%08x  ", reloc[i].rel[j].r_offset);
-                    printf("%08x ", reloc[i].rel[j].r_info);
-                    afficher_type_relocation(ELF32_R_TYPE(reloc[i].rel[j].r_info));
+                    for (int j = 0; j < entries; j++) {
+                        printf("%08x  ", reloc[i].rel[j].r_offset);
+                        printf("%08x ", reloc[i].rel[j].r_info);
+                        afficher_type_relocation(ELF32_R_TYPE(reloc[i].rel[j].r_info));
 
-                    Elf32_Word k = ELF32_R_SYM(reloc[i].rel[j].r_info);
-                    printf("%08x   ", sym[k].st_value);
+                        Elf32_Word k = ELF32_R_SYM(reloc[i].rel[j].r_info);
+                        printf("%08x   ", sym[k].st_value);
 
-                    if (ELF32_ST_TYPE(sym[k].st_info) == STT_SECTION) {
-                        Elf32_Half l = sym[k].st_shndx;
-                        afficher_chaine(shstrtab, shdr[l].sh_name, 0);
+                        if (ELF32_ST_TYPE(sym[k].st_info) == STT_SECTION) {
+                            Elf32_Half l = sym[k].st_shndx;
+                            afficher_chaine(shstrtab, shdr[l].sh_name, 0);
+                        }
+                        else {
+                            afficher_chaine(strtab, sym[k].st_name, 0);
+                        }
+                        printf("\n");
                     }
-                    else {
-                        afficher_chaine(strtab, sym[k].st_name, 0);
-                    }
-                    printf("\n");
                 }
-            }
-            else {
-                printf(" Offset     Info    Type            Sym.Value  Sym. Name + Addend\n");
+                else {
+                    printf(" Offset     Info    Type            Sym.Value  Sym. Name + Addend\n");
 
-                for (int j = 0; j < entries; j++) {
-                    printf("%08x  ", reloc[i].rela[j].r_offset);
-                    printf("%08x ", reloc[i].rela[j].r_info);
-                    afficher_type_relocation(ELF32_R_TYPE(reloc[i].rela[j].r_info));
+                    for (int j = 0; j < entries; j++) {
+                        printf("%08x  ", reloc[i].rela[j].r_offset);
+                        printf("%08x ", reloc[i].rela[j].r_info);
+                        afficher_type_relocation(ELF32_R_TYPE(reloc[i].rela[j].r_info));
 
-                    Elf32_Word k = ELF32_R_SYM(reloc[i].rela[j].r_info);
-                    printf("%08x   ", sym[k].st_value);
+                        Elf32_Word k = ELF32_R_SYM(reloc[i].rela[j].r_info);
+                        printf("%08x   ", sym[k].st_value);
 
-                    if (ELF32_ST_TYPE(sym[k].st_info) == STT_SECTION) {
-                        Elf32_Half l = sym[k].st_shndx;
-                        afficher_chaine(shstrtab, shdr[l].sh_name, 0);
+                        if (ELF32_ST_TYPE(sym[k].st_info) == STT_SECTION) {
+                            Elf32_Half l = sym[k].st_shndx;
+                            afficher_chaine(shstrtab, shdr[l].sh_name, 0);
+                        }
+                        else {
+                            afficher_chaine(strtab, sym[k].st_name, 0);
+                        }
+                        printf(" + %x\n", reloc[i].rela[j].r_addend);
                     }
-                    else {
-                        afficher_chaine(strtab, sym[k].st_name, 0);
-                    }
-                    printf(" + %x\n", reloc[i].rela[j].r_addend);
                 }
             }
         }
