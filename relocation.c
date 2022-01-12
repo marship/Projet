@@ -23,6 +23,9 @@ Relocations *lire_relocations(FILE *f, Elf32_Ehdr ehdr, Elf32_Shdr *shdr) {
     int nb_reloc = 0;
 
     for (int i = 0; i < ehdr.e_shnum; i++) {
+        reloc[i].rel = NULL;
+        reloc[i].rela = NULL;
+
         if (shdr[i].sh_type == SHT_REL || shdr[i].sh_type == SHT_RELA) {
             if (fseek(f, shdr[i].sh_offset, SEEK_SET) != 0) {
                 fprintf(stderr,
@@ -37,6 +40,11 @@ Relocations *lire_relocations(FILE *f, Elf32_Ehdr ehdr, Elf32_Shdr *shdr) {
             if (shdr[i].sh_type == SHT_REL) {
                 reloc[i].rel = malloc(entries * sizeof(Elf32_Rel));
 
+                if (reloc[i].rel == NULL) {
+                    fprintf(stderr, "ERREUR: Impossible d'allouer de la mémoire pour les ré-adressages\n");
+                    exit(EXIT_FAILURE);
+                }
+
                 for (int j = 0; j < entries; j++) {
                     if (read_uint32(&(reloc[i].rel[j].r_offset), f, ehdr.e_ident[EI_DATA]) == 0 ||
                         read_uint32(&(reloc[i].rel[j].r_info), f, ehdr.e_ident[EI_DATA]) == 0)
@@ -50,6 +58,11 @@ Relocations *lire_relocations(FILE *f, Elf32_Ehdr ehdr, Elf32_Shdr *shdr) {
             }
             else {
                 reloc[i].rela = malloc(entries * sizeof(Elf32_Rela));
+
+                if (reloc[i].rela == NULL) {
+                    fprintf(stderr, "ERREUR: Impossible d'allouer de la mémoire pour les ré-adressages\n");
+                    exit(EXIT_FAILURE);
+                }
 
                 for (int j = 0; j < entries; j++) {
                     if (read_uint32(&(reloc[i].rela[j].r_offset), f, ehdr.e_ident[EI_DATA]) == 0 ||
@@ -83,7 +96,7 @@ void liberer_relocations(Relocations *reloc, Elf32_Ehdr ehdr) {
         if (reloc[i].rel != NULL) {
             free(reloc[i].rel);
         }
-        else if (reloc[i].rela != NULL) {
+        if (reloc[i].rela != NULL) {
             free(reloc[i].rela);
         }
     }

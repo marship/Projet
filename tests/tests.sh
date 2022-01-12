@@ -135,7 +135,15 @@ do
         fi
 
         afficher_categorie
+
+        for file in ${PROJET}/tests/fichiers/*
+        do
+            effectuer_tests
+        done
+
+        file="tests/fichiers/example*"
         effectuer_tests
+
     fi
 
     afficher_separateur

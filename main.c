@@ -31,8 +31,7 @@ void usage(char *name)
 int main(int argc, char **argv)
 {
     int opt;
-    int opt_h = 0, opt_S = 0, opt_s = 0, opt_r = 0, opt_x = 0;
-    int nb_fichiers = 0;
+    int opt_a = 0, opt_h = 0, opt_S = 0, opt_s = 0, opt_r = 0, opt_x = 0;
 
     if (argc < 2)
     {
@@ -61,26 +60,23 @@ int main(int argc, char **argv)
     while ((opt = getopt_long(argc, argv, "ahSsrx:H", longopts, NULL)) != -1) {
         switch (opt) {
         case 'a':
-            opt_h = 1;
-            opt_S = 1;
-            opt_s = 1;
-            opt_r = 1;
+            opt_a++;
             break;
 
         case 'h':
-            opt_h = 1;
+            opt_h++;
             break;
 
         case 'S':
-            opt_S = 1;
+            opt_S++;
             break;
 
         case 's':
-            opt_s = 1;
+            opt_s++;
             break;
 
         case 'r':
-            opt_r = 1;
+            opt_r++;
             break;
 
         case 'x':
@@ -106,7 +102,20 @@ int main(int argc, char **argv)
         }
     }
 
-    if ((!opt_h && !opt_S && !opt_s && !opt_r && !opt_x)) {
+    if ((!opt_h && !opt_S && !opt_s && !opt_r && !opt_x && !opt_a)) {
+        usage(argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    int nb_fichiers = argc - 1 - opt_h - opt_S - opt_s - opt_r - opt_a - 2 * opt_x;
+
+    for (int i = 1; i < argc; i++) {
+        if (strncmp(argv[i], "--hex-dump=", 11) == 0) {
+            nb_fichiers++;
+        }
+    }
+
+    if (nb_fichiers == 0) {
         usage(argv[0]);
         return EXIT_FAILURE;
     }
@@ -114,7 +123,6 @@ int main(int argc, char **argv)
     for (int i = 1; i < argc; i++) {
         if (argv[i][0] != '-' && strcmp(argv[i-1], "-x") != 0 && strcmp(argv[i-1], "--hex-dump") != 0) {
             char *nom_fichier = argv[i];
-            nb_fichiers++;
 
             // Ouverture du fichier
             FILE *f = fopen(nom_fichier, "rb");
@@ -123,6 +131,10 @@ int main(int argc, char **argv)
             {
                 fprintf(stderr, "ERREUR: Impossible d'ouvir le fichier : %s\n", nom_fichier);
                 exit(EXIT_FAILURE);
+            }
+
+            if (nb_fichiers > 1) {
+                printf("\nFile: %s\n", nom_fichier);
             }
 
             // On calcule la taille du fichier (en octets)
@@ -136,12 +148,12 @@ int main(int argc, char **argv)
             Relocations *reloc = lire_relocations(f, ehdr, shdr);
             Elf32_Sym *sym = lire_symboles(f, ehdr, shdr);
 
-            if (opt_h) {
+            if (opt_h || opt_a) {
                 afficher_elf_header(ehdr);
             }
 
-            if (opt_S) {
-                if (!opt_h) {
+            if (opt_S || opt_a) {
+                if (!opt_h && !opt_a) {
                     if (ehdr.e_shnum == 1) {
                         printf("There is %d section header, starting at offset 0x%x:\n", ehdr.e_shnum, ehdr.e_shoff);
                     }
@@ -152,11 +164,11 @@ int main(int argc, char **argv)
                 afficher_section_header(shdr, ehdr, shstrtab);
             }
 
-            if (opt_r) {
+            if (opt_r || opt_a) {
                 afficher_relocations(reloc, ehdr, shdr, sym, shstrtab, strtab);
             }
 
-            if (opt_s) {
+            if (opt_s || opt_a) {
                 afficher_symboles(sym, ehdr, shdr, shstrtab, strtab);
             }
 
@@ -219,11 +231,6 @@ int main(int argc, char **argv)
             }
             fclose(f);
         }
-    }
-
-    if (nb_fichiers == 0) {
-        usage(argv[0]);
-        return EXIT_FAILURE;
     }
 
     for (int i = 0; i < opt_x; i++) {

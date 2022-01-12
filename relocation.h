@@ -18,7 +18,7 @@ typedef struct {
     Elf32_Sword r_addend;
 } Elf32_Rela;
 
-typedef union {
+typedef struct {
     Elf32_Rel *rel;
     Elf32_Rela *rela;
 } Relocations;

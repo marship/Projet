@@ -14,6 +14,8 @@ int nbSym = 0;
 
 Elf32_Sym *lire_symboles(FILE *f, Elf32_Ehdr ehdr, Elf32_Shdr *shdr)
 {
+    noSection = 0;
+
     if (shdr == NULL) {
         return NULL;
     }
