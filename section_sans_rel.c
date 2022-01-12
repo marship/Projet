@@ -9,7 +9,7 @@ uint32_t nb_rel(Elf32_Ehdr ehdr, Elf32_Shdr *shdr){
     uint32_t i = 0;
     uint32_t j = 0;
     while(j != ehdr.e_shnum){
-        if( (shdr[j].sh_type == SHT_NOBITS) || (shdr[j].sh_type == SHT_RELA) || (shdr[j].sh_type == SHT_REL) ){
+        if( (shdr[j].sh_type == SHT_RELA) || (shdr[j].sh_type == SHT_REL) ){
             i++;
         }
         j++;
@@ -21,8 +21,8 @@ Elf32_Shdr *maj_section(Elf32_Ehdr ehdr, Elf32_Shdr *shdr){
     uint32_t i = 0;
     uint32_t j = 1;
     while(i != ehdr.e_shnum){
-        if( (shdr[i].sh_type == SHT_NOBITS) || (shdr[i].sh_type == SHT_RELA) || (shdr[i].sh_type == SHT_REL) ){
-            while( (i+j != ehdr.e_shnum) && (shdr[i+j].sh_type == SHT_NOBITS) && (shdr[i+j].sh_type == SHT_RELA) && (shdr[i+j].sh_type == SHT_REL) ){
+        if( (shdr[i].sh_type == SHT_RELA) || (shdr[i].sh_type == SHT_REL) ){
+            while( (i+j != ehdr.e_shnum) && (shdr[i+j].sh_type == SHT_RELA) && (shdr[i+j].sh_type == SHT_REL) ){
                 j++;
             }
             if(i+j == ehdr.e_shnum){
@@ -82,7 +82,7 @@ Elf32_Sym *maj_ndx(Elf32_Sym *sym, Elf32_Shdr *shdr, Elf32_Ehdr ehdr){
     uint32_t k = 0;
     while(i != nbSym){
         while(j != sym[i].st_shndx){
-            if( (shdr[j].sh_type == SHT_NOBITS) || (shdr[j].sh_type == SHT_RELA) || (shdr[j].sh_type == SHT_REL) ){
+            if( (shdr[j].sh_type == SHT_RELA) || (shdr[j].sh_type == SHT_REL) ){
                 k++;
             }
             j++;
