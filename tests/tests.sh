@@ -101,6 +101,9 @@ fi
 
 # --------------------------------------------------------------------------------
 
+NB_TESTS=0
+NB_PASSED=0
+
 for opt in "${options[@]}"
 do
     if [[ $opt = "-m" || $opt = "--main" ]]
@@ -144,7 +147,17 @@ do
         file="tests/fichiers/example*"
         effectuer_tests
 
+        file="tests/fichiers/test*"
+        effectuer_tests
     fi
 
     afficher_separateur
 done
+
+
+NB_FAILED=$((NB_TESTS - NB_PASSED))
+TAUX_PASSED=$((NB_PASSED * 100 / NB_TESTS))
+TAUX_FAILED=$((NB_FAILED * 100 / NB_TESTS))
+
+printf "Tests réussis : %3d sur %3d (%d%%)\n" ${NB_PASSED} ${NB_TESTS} ${TAUX_PASSED}
+printf "Tests échoués : %3d sur %3d (%d%%)\n" ${NB_FAILED} ${NB_TESTS} ${TAUX_FAILED}

@@ -139,8 +139,9 @@ effectuer_tests() {
     # Si les stdout et stderr sont identiques
     if [ $DIFF_OUT -eq 0 ] && [ $DIFF_ERR -eq 0 ]
     then
-        afficher_test "${file##*/}" "$DIFF_OUT" "${OBTENU_STDOUT}" "${ATTENDU_STDOUT}" \
+        afficher_test "${file##*/}" 0 "${OBTENU_STDOUT}" "${ATTENDU_STDOUT}" \
                       "${OBTENU_STDERR}" "${ATTENDU_STDERR[@]}"
+        NB_PASSED=$((NB_PASSED + 1))
 
     # Si les stderr sont identiques mais pas les stdout
     elif [ $DIFF_ERR -eq 0 ]
@@ -148,12 +149,13 @@ effectuer_tests() {
         # Si les stderr sont vides
         if [ -z "${OBTENU_STDERR}" ]
         then
-            afficher_test "${file##*/}" "$DIFF_OUT" "${OBTENU_STDOUT}" "${ATTENDU_STDOUT}" \
+            afficher_test "${file##*/}" 1 "${OBTENU_STDOUT}" "${ATTENDU_STDOUT}" \
                           "${OBTENU_STDERR}" "${ATTENDU_STDERR[@]}"
         # Sinon les stderr ne sont pas vides
         else
-            afficher_test "${file##*/}" "$DIFF_ERR" "${OBTENU_STDOUT}" "${ATTENDU_STDOUT}" \
+            afficher_test "${file##*/}" 0 "${OBTENU_STDOUT}" "${ATTENDU_STDOUT}" \
                           "${OBTENU_STDERR}" "${ATTENDU_STDERR[@]}"
+            NB_PASSED=$((NB_PASSED + 1))
         fi
 
     # Sinon les stderr sont différentes
@@ -168,39 +170,89 @@ effectuer_tests() {
             i=$(($i+1))
         done
 
-        afficher_test "${file##*/}" "$DIFF_ERR" "${OBTENU_STDOUT}" "${ATTENDU_STDOUT}" \
+        afficher_test "${file##*/}" $DIFF_ERR "${OBTENU_STDOUT}" "${ATTENDU_STDOUT}" \
                       "${OBTENU_STDERR}" "${ATTENDU_STDERR[@]}"
+        if [ $DIFF_ERR -eq 0 ]
+        then
+            NB_PASSED=$((NB_PASSED + 1))
+        fi
 
     fi
+
+    NB_TESTS=$((NB_TESTS + 1))
 }
 
 
 effectuer_tests_main() {
     OBTENU=$(${PROJET}/main 2>&1)
     diff <(echo "${OBTENU}") <(echo "${USAGE_MAIN}") &>/dev/null
-    afficher_test "test aucun argument" "$?" "${OBTENU}" "${USAGE_MAIN}"
+    DIFF=$?
+    afficher_test "test aucun argument" $DIFF "${OBTENU}" "${USAGE_MAIN}"
+
+    if [ $DIFF -eq 0 ]
+    then
+        NB_PASSED=$((NB_PASSED + 1))
+    fi
 
     OBTENU=$(${PROJET}/main ${PROJET}/tests/corrects/example1 2>&1)
     diff <(echo "${OBTENU}") <(echo "${USAGE_MAIN}") &>/dev/null
-    afficher_test "test aucune option" "$?" "${OBTENU}" "${USAGE_MAIN}"
+    DIFF=$?
+    afficher_test "test aucune option" $DIFF "${OBTENU}" "${USAGE_MAIN}"
+
+    if [ $DIFF -eq 0 ]
+    then
+        NB_PASSED=$((NB_PASSED + 1))
+    fi
 
     OBTENU=$(${PROJET}/main -a 2>&1)
     diff <(echo "${OBTENU}") <(echo "${USAGE_MAIN}") &>/dev/null
-    afficher_test "test aucun fichier" "$?" "${OBTENU}" "${USAGE_MAIN}"
+    DIFF=$?
+    afficher_test "test aucun fichier" $DIFF "${OBTENU}" "${USAGE_MAIN}"
+
+    if [ $DIFF -eq 0 ]
+    then
+        NB_PASSED=$((NB_PASSED + 1))
+    fi
 
     OBTENU=$(${PROJET}/main -H 2>&1)
     diff <(echo "${OBTENU}") <(echo "${USAGE_MAIN}") &>/dev/null
-    afficher_test "test affichage aide" "$?" "${OBTENU}" "${USAGE_MAIN}"
+    DIFF=$?
+    afficher_test "test affichage aide" $DIFF "${OBTENU}" "${USAGE_MAIN}"
+
+    if [ $DIFF -eq 0 ]
+    then
+        NB_PASSED=$((NB_PASSED + 1))
+    fi
 
     OBTENU=$(${PROJET}/main -q 2>&1)
     diff <(echo "${OBTENU}") <(echo "${OPTION_INVALIDE}${USAGE_MAIN}") &>/dev/null
-    afficher_test "test option invalide" "$?" "${OBTENU}" "${OPTION_INVALIDE}${USAGE_MAIN}"
+    DIFF=$?
+    afficher_test "test option invalide" $DIFF "${OBTENU}" "${OPTION_INVALIDE}${USAGE_MAIN}"
+
+    if [ $DIFF -eq 0 ]
+    then
+        NB_PASSED=$((NB_PASSED + 1))
+    fi
 
     OBTENU=$(${PROJET}/main -a aaa 2>&1)
     diff <(echo "${OBTENU}") <(echo "${FICHIER_INEXISTANT}") &>/dev/null
-    afficher_test "test fichier inexistant" "$?" "${OBTENU}" "${FICHIER_INEXISTANT}"
+    DIFF=$?
+    afficher_test "test fichier inexistant" $DIFF "${OBTENU}" "${FICHIER_INEXISTANT}"
+
+    if [ $DIFF -eq 0 ]
+    then
+        NB_PASSED=$((NB_PASSED + 1))
+    fi
 
     OBTENU=$(${PROJET}/main ${PROJET}/tests/corrects/example1 -x 2>&1)
     diff <(echo "${OBTENU}") <(echo "${OPTION_SANS_ARGUMENT}${USAGE_MAIN}") &>/dev/null
-    afficher_test "test option -x sans argument" "$?" "${OBTENU}" "${OPTION_SANS_ARGUMENT}${USAGE_MAIN}"
+    DIFF=$?
+    afficher_test "test option -x sans argument" $DIFF "${OBTENU}" "${OPTION_SANS_ARGUMENT}${USAGE_MAIN}"
+
+    if [ $DIFF -eq 0 ]
+    then
+        NB_PASSED=$((NB_PASSED + 1))
+    fi
+
+    NB_TESTS=$((NB_TESTS + 7))
 }
