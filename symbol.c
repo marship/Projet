@@ -21,7 +21,7 @@ Elf32_Sym *lire_symboles(FILE *f, Elf32_Ehdr ehdr, Elf32_Shdr *shdr)
     }
 
     // Recherche de la section des symboles
-    while (shdr[noSection].sh_type != SHT_SYMTAB && noSection < ehdr.e_shnum)
+    while (noSection < ehdr.e_shnum && shdr[noSection].sh_type != SHT_SYMTAB)
     {
         noSection++;
     }

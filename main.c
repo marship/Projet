@@ -9,6 +9,7 @@
 #include "section.h"
 #include "relocation.h"
 #include "symbol.h"
+#include "section_sans_rel.h"
 
 
 void usage(char *name)
@@ -24,6 +25,7 @@ void usage(char *name)
             "  -s --symbols               Afficher la table des symboles\n"
             "  -r --relocs                Afficher les réadressages (si présents)\n"
             "  -x --hex-dump=<numéro|nom> Afficher le contenu de la section <numéro|nom> sous forme d'octets\n"
+			"  -p --partie                \n"
             "  -H --help                  Afficher l'aide-mémoire\n",
             name);
 }
@@ -31,7 +33,7 @@ void usage(char *name)
 int main(int argc, char **argv)
 {
     int opt;
-    int opt_a = 0, opt_h = 0, opt_S = 0, opt_s = 0, opt_r = 0, opt_x = 0;
+    int opt_a = 0, opt_h = 0, opt_S = 0, opt_s = 0, opt_r = 0, opt_x = 0, opt_p = 0;
 
     if (argc < 2)
     {
@@ -53,6 +55,7 @@ int main(int argc, char **argv)
         { "symbols", no_argument, NULL, 's' },
         { "relocs", no_argument, NULL, 'r' },
         { "hex-dump", required_argument, NULL, 'x' },
+		{ "partie", no_argument, NULL, 'p'},
         { "help", no_argument, NULL, 'H' },
         { NULL, 0, NULL, 0 }
     };
@@ -92,6 +95,10 @@ int main(int argc, char **argv)
             strcpy(arg_x[opt_x-1], optarg);
             break;
 
+		case 'p':
+            opt_p++;
+			break;
+
         case 'H':
             usage(argv[0]);
             return EXIT_SUCCESS;
@@ -102,12 +109,12 @@ int main(int argc, char **argv)
         }
     }
 
-    if ((!opt_h && !opt_S && !opt_s && !opt_r && !opt_x && !opt_a)) {
+    if (!opt_h && !opt_S && !opt_s && !opt_r && !opt_x && !opt_a && !opt_p) {
         usage(argv[0]);
         return EXIT_FAILURE;
     }
 
-    int nb_fichiers = argc - 1 - opt_h - opt_S - opt_s - opt_r - opt_a - 2 * opt_x;
+    int nb_fichiers = argc - 1 - opt_h - opt_S - opt_s - opt_r - opt_a - opt_p - 2 * opt_x;
 
     for (int i = 1; i < argc; i++) {
         if (strncmp(argv[i], "--hex-dump=", 11) == 0) {
@@ -214,6 +221,15 @@ int main(int argc, char **argv)
                     }
                 }
                 free(num_x);
+            }
+
+            if (opt_p) {
+			    int j = nb_rel(ehdr, shdr);
+			    shdr = maj_section(ehdr, shdr);
+			    ehdr.e_shnum = ehdr.e_shnum - j;
+			    ehdr.e_shstrndx = index_string(ehdr, shdr);
+			    afficher_elf_header(ehdr);
+			    afficher_section_header(shdr, ehdr, shstrtab);
             }
 
             if (shdr != NULL) {

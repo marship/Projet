@@ -281,7 +281,7 @@ void afficher_section_header(Elf32_Shdr *shdr, Elf32_Ehdr ehdr, char *shstrtab)
         printf("%.6x ", shdr[i].sh_size);
         printf("%.2x ", shdr[i].sh_entsize);
 
-        int nb_flags = compter_flags(shdr[i].sh_flags);
+        int nb_flags = compter_bits(shdr[i].sh_flags);
 
         if ((shdr[i].sh_flags & SHF_MASKOS) != 0) {
             nb_flags -= 7;

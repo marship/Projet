@@ -41,6 +41,20 @@ int read_uint32(uint32_t *ptr, FILE *stream, unsigned char endian);
  */
 int read_int32(int32_t *ptr, FILE *stream, unsigned char endian);
 
-int compter_flags(Elf32_Word flags);
+/**
+ * @brief Fonction qui renvoie le nombre de bits à 1 dans un mot
+ * 
+ * @param mot (Elf32_Word) Mot dans lequel compter le nombre de bits à 1
+ * @return (int) Renvoie le nombre de bits à 1 dans mot
+ */
+int compter_bits(Elf32_Word mot);
+
+/**
+ * @brief Fonction qui lit l'extension du fichier et renvoie si c'est un executable ou non
+ * 
+ * @param nom (char *) Nom du Fichier (extension inclu)
+ * @return (int) Si le fichier n'a pas d'extension, renvoie 0 | Si il en a une, renvoie 1
+ */
+int extension_fichier(char *nom);
 
 #endif

@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <string.h>
 #include "fonctions_utilitaires.h"
 #include "elf_header.h"
 
@@ -109,15 +110,28 @@ int read_int32(int32_t *ptr, FILE *stream, unsigned char endian)
     return 1;
 }
 
-int compter_flags(Elf32_Word flags) {
+int compter_bits(Elf32_Word mot) {
     int n = 0;
 
-    while (flags != 0) {
-        if ((flags & 1) == 1) {
+    while (mot != 0) {
+        if ((mot & 1) == 1) {
             n++;
         }
-        flags = flags >> 1;
+        mot = mot >> 1;
     }
 
     return n;
+}
+
+int extension_fichier(char *nom)
+{
+    char *ext = strrchr(nom, '.');
+    if (ext == NULL) {
+        printf("Pas d'extension\n");
+        return 0;
+    }
+    else {
+        printf("Extension : %s\n", ext);
+        return 1;
+    }
 }

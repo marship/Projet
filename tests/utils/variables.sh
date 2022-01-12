@@ -12,6 +12,7 @@ Options:
   -s --symbols               Afficher la table des symboles
   -r --relocs                Afficher les réadressages (si présents)
   -x --hex-dump=<numéro|nom> Afficher le contenu de la section <numéro|nom> sous forme d'octets
+  -p --partie                
   -H --help                  Afficher l'aide-mémoire
 END
 )
