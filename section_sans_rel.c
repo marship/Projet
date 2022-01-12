@@ -89,7 +89,11 @@ Elf32_Sym *maj_ndx(Elf32_Sym *sym, Elf32_Shdr *shdr, Elf32_Ehdr ehdr){
         }
         j = 1;
         //printf("%d / %d\n", sym[i].st_shndx, k);
+        // MAJ NDX
         sym[i].st_shndx = sym[i].st_shndx - k;
+        k = 0;
+        // MAJ VALUE
+        sym[i].st_value += shdr[sym[i].st_shndx].sh_addr;
         k = 0;
         i++;
     }
