@@ -94,7 +94,9 @@ then
     exit 1
 elif [ $# -eq 1 ]
 then
-    options=("-m" "-h" "-S" "-s" "-r" "--hex-dump=1" "--hex-dump=.strtab" "-Sshr")
+    options=("-m" "-h" "-S" "-s" "-r" "-Sshr" "--hex-dump=1" "--hex-dump=2" "--hex-dump=3" \
+             "--hex-dump=4" "--hex-dump=5" "--hex-dump=.debug_aranges" "--hex-dump=.rel.debug_aranges" \
+             "--hex-dump=.symtab" "--hex-dump=.shstrtab" "--hex-dump=.strtab")
 fi
 
 # --------------------------------------------------------------------------------
