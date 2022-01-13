@@ -144,10 +144,10 @@ do
             effectuer_tests
         done
 
-        file="tests/fichiers/example*"
+        file="${PROJET}/tests/fichiers/example*"
         effectuer_tests
 
-        file="tests/fichiers/test*"
+        file="${PROJET}/tests/fichiers/test*"
         effectuer_tests
     fi
 
