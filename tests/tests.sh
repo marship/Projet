@@ -4,9 +4,9 @@
 PROJET="$(realpath $0)"
 PROJET="${PROJET%/*/*}"
 
-source ${PROJET}/tests/utils/couleurs.sh
-source ${PROJET}/tests/utils/fonctions.sh
-source ${PROJET}/tests/utils/variables.sh
+source "${PROJET}/tests/utils/couleurs.sh"
+source "${PROJET}/tests/utils/fonctions.sh"
+source "${PROJET}/tests/utils/variables.sh"
 
 # --------------------------------------------------------------------------------
 
